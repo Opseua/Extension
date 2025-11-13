@@ -1,6 +1,6 @@
 rem COMO USAR
-rem %fileNircmdSetSize% "stem Inform" "890 50 600 400" (BUSCANDO POR PARTE DO NOME) [PARAMENTROS: 3]
-rem %fileNircmdSetSize% "System Informer" "890 50 600 400" "EXATO" (BUSCANDO PELO NOME EXATO) [PARAMENTROS: 4]
+rem %fileSetSize% "stem Inform" "890 50 600 400" (BUSCANDO POR PARTE DO NOME) [PARAMENTROS: 3]
+rem %fileSetSize% "System Informer" "890 50 600 400" "EXATO" (BUSCANDO PELO NOME EXATO) [PARAMENTROS: 4]
 
 rem ARGUMENTOS QTD | BIBLIOTECA NECESSARIA
 argsQtd = WScript.Arguments.Count: Set objFSO = CreateObject("Scripting.FileSystemObject")

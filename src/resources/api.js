@@ -1,46 +1,38 @@
 // 'code': true/200 | 'object': true | 'maxConnect'/'maxResponse': 10 | 'bodyReqRaw'/'bodyResRaw': true (body em buffer) | 'hideHeaders': false | 'defaultHeaders': false
+// 'modeRedirect': 'block'/'followAndGet'(SÓ NODE!!!)
 // let infApi, retApi;
 // infApi = { e, 'method': 'POST', 'code': true, 'object': true, 'url': `https://ntfy.sh/AAA`, 'headers': { 'Content-Type': 'application/json', }, 'body': { 'aaa': 'bbb', }, };
 // infApi = { e, 'method': 'POST', 'code': true, 'object': true, 'url': `https://ntfy.sh/AAA`, 'headers': { 'Content-Type': 'application/x-www-form-urlencoded', }, 'body': { 'key': 'val', }, };
 // infApi = { e, 'method': 'POST', 'code': true, 'object': true, 'url': `https://ntfy.sh/AAA`, 'headers': { 'Content-Type': 'text/plain;charset=UTF-8', }, 'body': `Texto aqui`, };
-// infApi = [
-//     2, // ESPERAR APENAS PELAS x PRIMEIRAS REQUISIÇÕES CONCLUÍDAS OU 0 PARA TODAS
-//     { e, 'method': 'GET', 'code': true, 'object': true, 'url': `https://fakeresponder.com/?sleep=4000&status=200`, 'headers': { 'Content-Type': 'application/json', }, },
-//     { e, 'method': 'GET', 'code': true, 'object': true, 'url': `https://fakeresponder.com/?sleep=100&status=200`, 'headers': { 'Content-Type': 'application/json', }, },
-//     { e, 'method': 'GET', 'code': true, 'object': true, 'url': `https://fakeresponder.com/?sleep=10000&status=200`, 'headers': { 'Content-Type': 'application/json', }, },
-// ];
 // retApi = await api(infApi); console.log(retApi.msg);
-
-// fetch('http://www.cepdobrasil.com.br/rio-de-janeiro/rua-maria-da-silva.html', { 'headers': {}, 'body': null, 'method': 'GET', })
-//     .then(res => { console.log('RES CODE:', res.status); console.log('RES HEADERS:', [...res.headers.entries(),]); return res.text(); })
-//     .then(body => { console.log('RES BODY:', body); }).catch(error => { console.error('RESPONSE error:', error); });
-
-// PUT → atualiza tudo | PATCH → atualiza apenas uma parte {{{ CRIAR WEBHOOK https://webhook.site/ }}}
-// https://fakeresponder.com/?sleep=3000&status=401 | https://postman-echo.com/delay/3 | https://postman-echo.com/status/401
-// https://postman-echo.com/get?foo1=bar1&foo2=bar2
-// https://httpbin.org/delay/3 | https://httpbin.org/status/401| https://httpstat.us/200?sleep=5000
 
 let e = currentFile(new Error()), ee = e;
 async function api(inf = {}) {
     let ret = { 'ret': false, }; e = inf.e || e;
     try {
         let type = (getTypeof(globalThis.doGet) !== 'undefined'), reqE = 0, typeB = null; if (Array.isArray(inf)) { // MANTER ANTES DAS VARIÁVEIS DA 'inf'!!!
-            async function apiMulti(m, q) {
-                let cs = q.map(() => new AbortController()), ts = [], r = [], f = q.map((req, index) => {
-                    let c = cs[index]; req.controller = c, t = setTimeout(() => c.abort(), ((req.maxConnect || 20) * 1000)); ts.push(t); return api(req).then(res => {
-                        clearTimeout(t); r.push({ index, ...res, }); if (r.length >= m) { cs.forEach(c => c.abort()); ts.forEach(clearTimeout); }
-                    }).catch(e => { clearTimeout(t); r.push({ index, ...{ 'ret': false, 'msg': `API [MULTI]: ERRO | ${e.message}`, }, }); });
-                }); await Promise.race(f); while (r.length < m && r.length < q.length) { await new Promise(resolve => setTimeout(resolve, 50)); } return r.slice(0, m);
-            } let m = 1, i = inf.findIndex(v => getTypeof(v) === 'number'); if (i !== -1) { m = inf.splice(i, 1)[0]; } m = m === 0 ? inf.length : m;
-            let s = await apiMulti(m, inf), t = Array.isArray(s) ? s.some(v => v.ret) : s.ret; return { t, 'msg': `API [MULTI]: ${t ? 'OK' : 'ERRO | ***'}`, s, };
-        } let { method, url, headers = {}, body, maxConnect = 20, maxResponse = 20, object = false, controller, hideHeaders = true, bodyResRaw, bodyReqRaw, code, defaultHeaders = true, } = inf;
+            let length = inf.length; if (length === 0) { ret['msg'] = `API: ERRO | ARRAY 'inf' VAZIA`; return ret; } let maxResult = typeof inf[0] === 'number' ? inf.shift() : length;
+            maxResult = maxResult < 1 ? length - 1 : maxResult; let response, promisesArr = inf.map(p => [api, p,]); response = await (async () => {
+                let arr = []; await Promise.allSettled(promisesArr.map(([f, a,], idx) => f(a).then(r => arr.push({ idx, 'ret': true, 'msg': 'OK', 'res': r, })).
+                    catch(e => arr.push({ idx, 'ret': false, 'msg': `ERRO | ${e}`, })))); return arr;
+            })(); response = response.slice(0, maxResult).map(x => ({ 'idx': x.idx, 'ret': x.res.ret, 'msg': x.res.msg, ...(x.res.hasOwnProperty('res') && { 'res': x.res.res, }), }));
+            let retOk = response.some(v => v.ret); return { 'ret': retOk, 'msg': `API [MULTI]: ${retOk ? 'OK' : 'ERRO | ***'}`, 'res': response, };
+        } let { method, url, headers = {}, body, maxConnect = 3, maxResponse = 20, object = false, controller, hideHeaders = true, bodyResRaw, bodyReqRaw, code, defaultHeaders = true, } = inf;
+
+        // ------------------- NOVO BLOCO --------------------------
+        let modeRedirect = ['block', 'followAndGet',].includes(inf.modeRedirect) && engType === 2 ? inf.modeRedirect : 'default'; if (modeRedirect === 'followAndGet' && !inf.reRunApi) {
+            let redirects = [], nextUrl = url, current; while (true) {
+                current = await api({ ...inf, 'modeRedirect': 'block', 'reRunApi': true, 'url': nextUrl, }); if (!current?.res) { break; } let code = current.res.code;
+                let location = current.res.url; if (code < 300 || code >= 400 || !location) { break; } redirects.push({ code, 'from': nextUrl, 'to': location, }); nextUrl = location;
+            } if (current?.res) { current.res.redirects = redirects; } return current;
+        } // ----------------------------------------------------------
 
         // ❌❌❌❌❌❌❌❌❌❌❌❌ NÃO SUBIR AS LINHAS!!! (PARA SEREM VISUALIZADAS NO GOOGLE APP SCRIPT) | CHECAR SE TEM ERRO ❌❌❌❌❌❌❌❌❌❌❌❌
         reqE = !['GET', 'POST', 'PUT', 'DELETE', 'PATCH',].includes(method) ? 1 : !url ? 2 : (['POST', 'PUT', 'PATCH',].includes(method) && !body) ? 3 : 0;
         if (reqE > 0) { ret['msg'] = `API: ERRO | ${reqE === 1 ? `MÉTODOS ACEITOS 'GET', 'POST', 'PUT', 'DELETE', 'PATCH'` : `INFORMAR O ${reqE === 2 ? `'url'` : `'body'`}`}`; return ret; }
 
         // REQ: HEADERS
-        let req, resU, resT, resC, resH = {}, resB, reqOpt = { method, 'redirect': 'follow', 'rejectUnauthorized': false, 'keepalive': true, }, timC = null, timR = null; if (defaultHeaders) {
+        let req, resU, resT, resC = '', resH = {}, resB, reqOpt = { method, 'keepalive': true, }, timC = null, timR = null; if (defaultHeaders) {
             let h = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', };
             h = { ...h, 'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"', 'sec-ch-ua-platform': '"Windows"', ...headers, }; headers = h;
         } reqOpt['headers'] = headers; function cT() { if (timC) { clearTimeout(timC); } if (timR) { clearTimeout(timR); } }
@@ -58,9 +50,11 @@ async function api(inf = {}) {
             } else if (eng && bodyReqRaw) { delete reqOpt['keepalive']; }
         }
 
-        // REQ: PREPARAR (GOOGLE | CHROME/NODE)
-        if (type) { reqOpt['muteHttpExceptions'] = true; reqOpt['validateHttpsCertificates'] = true; if (body) { reqOpt['payload'] = body; } }
-        else { controller = controller || new AbortController(); reqOpt['signal'] = controller.signal; if (body) { reqOpt['body'] = body; } }
+        // REQ: PREPARAR (GOOGLE | CHROME/NODE/HTML)
+        if (type) { reqOpt['followRedirects'] = modeRedirect !== 'block'; reqOpt['validateHttpsCertificates'] = false; reqOpt['muteHttpExceptions'] = true; } else {
+            reqOpt['redirect'] = modeRedirect === 'block' ? 'manual' : 'follow'; reqOpt['rejectUnauthorized'] = false; controller = controller || new AbortController();
+            reqOpt['signal'] = controller.signal;
+        } if (body) { reqOpt[type ? 'payload' : 'body'] = body; }
 
         // → REQ: PROCESSAR (GOOGLE | CHROME/NODE) | LIMPAR TIMEOUT (CHROME/NODE)
         if (type) { try { req = UrlFetchApp.fetch(url, reqOpt); } catch (c) { reqE = 3; ret['msg'] = c; } } else {
@@ -82,7 +76,14 @@ async function api(inf = {}) {
 
         try { // RES: PROCESSAR CODE/BODY/HEADERS/URL (GOOGLE | CHROME/NODE) | CHECAR SE TEM ERRO
             resC = req.cod || req.getResponseCode(); resB = type ? req.getContentText() : req.bod; resH = {}; (type ? Object.entries(req.getAllHeaders()) :
-                [...req.hea,]).forEach(([k, v,]) => resH[keyValLowCase(k)] = v); resU = req.url || resH['X-Final-Url']; delete resH['X-Final-Url']; resT = resU && new URL(resU).origin;
+                [...req.hea,]).forEach(([k, v,]) => resH[keyValLowCase(k)] = v); // resU = req.url || resH['X-Final-Url']; resT = resU && new URL(resU).origin;
+
+            // ------------------- NOVO BLOCO --------------------------
+            let loc = modeRedirect === 'block' && resH['location'] ? resH['location'] : null; if (loc) { resU = new URL(loc, req.url).href; }
+            else { resU = req.url || resH['X-Final-Url']; } resT = resU && new URL(resU).origin; delete resH['X-Final-Url'];
+            // ------------------- NOVO BLOCO --------------------------
+
+            delete resH['X-Final-Url'];
         } catch (c) { reqE = 4; ret['msg'] = c; } if (reqE > 0) { ret['msg'] = `API: ERRO | AO PROCESSAR CODE/URL/HEADERS/BODY → ${ret.msg}`; return ret; }
 
         // → RES: FAZER O PARSE DO BODY (SE NECESSÁRIO)
@@ -92,13 +93,14 @@ async function api(inf = {}) {
             ret['msg'] = 'API: OK';
             ret['ret'] = true;
         } else {
-            ret['msg'] = 'API: ERRO | CÓDIGO DE RETORNO INVÁLIDO';
+            ret['msg'] = `API: ERRO | CÓDIGO DE RETORNO INVÁLIDO '${resC}'`;
         }
         ret['res'] = {
             'code': resC,
             'object': typeB, // true → OBJETO | false → JSON | null → OUTRO TIPO
             'host': resT,
             'url': resU,
+            'redirects': [],
             ...(!hideHeaders && { 'headers': resH, }), // ADICIONAR HEADERS SE NECESSÁRIO
             'body': resB,
         };
@@ -114,4 +116,20 @@ async function api(inf = {}) {
 // CHROME | NODE
 globalThis['api'] = api;
 
+
+// infApi = [
+//     0, // ESPERAR APENAS PELAS x PRIMEIRAS REQUISIÇÕES CONCLUÍDAS OU 0 PARA TODAS
+//     { e, 'method': 'GET', 'code': true, 'object': true, 'url': `https://fakeresponder.com/?sleep=3000&status=200`, 'headers': { 'Content-Type': 'application/json', }, 'maxConnect': 4, },
+//     { e, 'method': 'GET', 'code': true, 'object': true, 'url': `https://fakeresponder.com/?sleep=100&status=200`, 'headers': { 'Content-Type': 'application/json', }, 'maxConnect': 2, },
+//     { e, 'method': 'GET', 'code': true, 'object': true, 'url': `https://fakeresponder.com/?sleep=5000&status=200`, 'headers': { 'Content-Type': 'application/json', }, 'maxConnect': 1, },
+// ];
+
+// fetch('http://www.cepdobrasil.com.br/rio-de-janeiro/rua-maria-da-silva.html', { 'headers': {}, 'body': null, 'method': 'GET', })
+//     .then(res => { console.log('RES CODE:', res.status); console.log('RES HEADERS:', [...res.headers.entries(),]); return res.text(); })
+//     .then(body => { console.log('RES BODY:', body); }).catch(error => { console.error('RESPONSE error:', error); });
+
+// PUT → atualiza tudo | PATCH → atualiza apenas uma parte {{{ CRIAR WEBHOOK https://webhook.site/ }}} http://www.msftconnecttest.com/redirect
+// https://fakeresponder.com/?sleep=3000&status=401 | https://postman-echo.com/delay/3 | https://postman-echo.com/status/401
+// https://postman-echo.com/get?foo1=bar1&foo2=bar2
+// https://httpbin.org/delay/3 | https://httpbin.org/status/401 | https://httpstat.us/200?sleep=5000
 

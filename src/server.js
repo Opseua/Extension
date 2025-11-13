@@ -5,11 +5,12 @@ async function serverRun(inf = {}) {
     try {
         await logConsole({ e, ee, 'txt': `**************** SERVER **************** [${startupTime(startup, new Date())}]`, });
 
-        // IMPEDIR 'serverRun' DE INICIAR
-        async function notRun() { await new Promise(r => setTimeout(r, 15 * 1000)); await notRun(); } if (gW.devMaster === 'NOTE_HP') { await notRun(); }
+        // IMPEDIR 'serverRun' DE PROSSEGUIR (A CADA x MINUTOS)
+        async function notRun() { if (['AWS',].includes(gW.devMaster)) { await claroAuth(); } await new Promise(r => setTimeout(r, (5 * (60 * 1000)))); await notRun(); }
+        if (['NOTE_HP', 'AWS',].includes(gW.devMaster)) { logConsole({ e, ee, 'txt': `❌❌❌ IGNORANDO EXECUÇÃO DO server.js ❌❌❌`, }); await notRun(); }
 
         // RESETAR BADGE
-        chromeActions({ e, 'action': 'badge', 'text': '', });
+        chromeActions({ e, 'action': 'badge', 'text': '', }); // z_testeElementAction({}); return; // TESTES
 
         // ATALHO PRESSIONADO
         chrome.commands.onCommand.addListener(async function (...inf) {
@@ -42,7 +43,26 @@ async function serverRun(inf = {}) {
             setInterval(async () => { indicationCheck({}); }, delay); // A CADA x MINUTO(s)
         }
 
-        // z_testeElementAction({});
+        // MANTER ORDEM DA ABA
+        if ((await new Promise((resolve) => { chrome.identity.getProfileUserInfo(function (u) { resolve(u.email); }); })).includes('1@gmail.com')) {
+            logConsole({ e, ee, 'txt': `MONITOR DE ABAS ATIVADO`, }); async function enforceTabOrder() {
+                let TAB_URL = 'https://www.tryrating.com/', B = chrome.tabs, W = chrome.windows, isMoving = false; let moveTab = (tabId, index, retries = 0) => {
+                    if (retries >= 10) { return (isMoving = false); }
+                    B.move(tabId, { index, }, () => {
+                        if (chrome.runtime.lastError) { if (chrome.runtime.lastError.message.includes('Tabs cannot be edited')) { setTimeout(() => moveTab(tabId, index, retries + 1), 200); } else { isMoving = false; } }
+                        else { isMoving = false; }
+                    });
+                }; let checkAndMove = () => {
+                    if (isMoving) { return; } isMoving = true;
+                    W.getCurrent({ populate: false, }, (win) => {
+                        if (!win) { return (isMoving = false); } B.query({ windowId: win.id, }, (tabs) => {
+                            let targetTab = tabs.find(t => t.url.startsWith(TAB_URL)); if (!targetTab) { return (isMoving = false); } let pinnedCount = tabs.filter(t => t.pinned).length;
+                            let targetIndex = pinnedCount; if (targetTab.index !== targetIndex) { setTimeout(() => moveTab(targetTab.id, targetIndex), 50); } else { isMoving = false; }
+                        });
+                    });
+                }; let tabListener = () => { if (!isMoving) { checkAndMove(); } }; B.onCreated.addListener(tabListener); // B.onRemoved.addListener(tabListener); B.onMoved.addListener(tabListener);
+            } enforceTabOrder();
+        }
 
         ret['ret'] = true;
         ret['msg'] = `SERVER: OK`;

@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+
 
 // let infGetPath, retGetPath; // 'isFunction': true
 // infGetPath = { 'e': new Error(), };
@@ -68,14 +68,16 @@ async function getPath(inf = {}) {
         res = { 'conf': nd, 'letter': nd, 'root': nd, 'functions': nd, 'project': nd, 'file': nd, 'line': 0, };
     }
 
-    letter = res.letter; gW['conf'] = res.conf; gW['letter'] = res.letter; gW['root'] = res.root; gW['functions'] = res.functions; gW['project'] = res.project; gW['file'] = res.file; gW['line'] = res.line;
+    globalThis['letter'] = res.letter;
+
+    gW['conf'] = res.conf; gW['letter'] = res.letter; gW['root'] = res.root; gW['functions'] = res.functions; gW['project'] = res.project; gW['file'] = res.file; gW['line'] = res.line;
 
     if (!isFunction) {
         let devChildrenIndex = gW.devices[1][1][`${res.project}_${devChildren}`]; devChildren = devChildrenIndex > -1 ? gW.devices[1][2][devChildrenIndex] : nd;
         let devMasterDevSlaveDevChildren = `${gW.devMaster}-${gW.devSlave}-${devChildren}`; gW['devChildren'] = devChildren;
         gW['devGet'] = [`${gW.hostPortWeb}/?roo=${devMasterDevSlaveDevChildren}`, `${gW.hostPortLoc}/?roo=${devMasterDevSlaveDevChildren}`,];
     } else {
-        let fPW = `${letter}:/ARQUIVOS`; fileProjetos = `${fPW}/PROJETOS`; fileChrome_Extension = `${fPW}/PROJETOS/Chrome_Extension`; fileWindows = `${fPW}/WINDOWS`;
+        let fPW = `${letter}:/ARQUIVOS`; globalThis['fileProjetos'] = `${fPW}/PROJETOS`; globalThis['fileChrome_Extension'] = `${fPW}/PROJETOS/Chrome_Extension`; globalThis['fileWindows'] = `${fPW}/WINDOWS`;
         gW['conf'] = res.conf; gW['root'] = res.root; gW['functions'] = res.functions; gW['project'] = res.project; gW['file'] = res.file; gW['line'] = res.line;
     }
 

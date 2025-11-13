@@ -20,8 +20,7 @@ async function client(inf = {}) {
 
             // # ON MESSAGE
             ws.onmessage = async (data) => {
-                let message = data.data.toString('utf-8'), pingPong = message === `ping` ? 1 : message === `pong` ? 2 : 0;
-                // ÚLTIMA MENSAGEM RECEBIDA
+                let message = data.data.toString('utf-8'), pingPong = message === `ping` ? 1 : message === `pong` ? 2 : 0; // ÚLTIMA MENSAGEM RECEBIDA
                 ws['lastMessage'] = ws.lastMessage || pingPong > 0 ? Number(dateHour().res.tim) : false; // logConsole({ e, ee, 'txt': `← CLI | ${ws.lastMessage} | ${hostRoom}` });
                 if (pingPong > 0) { // RECEBIDO: 'PING' ENVIAR 'PONG'
                     if (pingPong === 2) { return; } ws.send('pong'); // logConsole({ e, ee, 'txt': `RECEBEU PING ${locWeb} '${room}'` });

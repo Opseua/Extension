@@ -1,19 +1,23 @@
-// await new Promise(r => setTimeout(r, 2000));
+// await new Promise(r => setTimeout(r, (15 * (1000))));
+// setInterval(async () => { /* APÓS 15 SEGUNDOS E REPETIÇÃO */ }, (15 * (1000))); setInterval(async () => { /* APÓS 2 MINUTOS E REPETIÇÃO */ }, (2 * (60 * 1000)));
 
 /* CHECAR SE É ARRAY  */ // Array.isArray(['a', 'b', ])   |   CHECAR SE TEM A CHAVE  if ('chave' in obj){ }   |   CHECAR SE É OBJETO typeof obj === 'object'
 // let { 'key': atribuirNisso, } = { 'key': 'AAA', }; console.log(atribuirNisso); let arrNew = arr.map((v, index) => ({ index, 'providerOk': v.provider, 'actionOk': v.action, })); // PODE REATRIBUIR NA MESMA VARIÁVEL
 // let ret = rets.some(v => v.ret === true)), ret = rets.every(v => v.ret === true)); 
 // let string = 'a/b/c/d'; console.log(string.split('/').reverse()[0]); console.log(string.split('/').reverse()[1]); console.log(string.split('/').reverse()[2]); // SPLIT POR '/' E PEGAR A PARTIR DO ÚLTIMO ÍNDICE
+// Math.trunc(value) // REMOVER ARREDONDAMENTO (MANTENDO O MESMO NÚMERO ANTES DO PONTO)
 
 // for (let [index, value,] of array.entries()) { console.log('INDEX', index, 'VALUE', value); };
+// array = array.map(v => { let resultado = rangeParse(v); return resultado * 2; });
+
 // let obj = { 'keyA': 'valueA', 'keyB': 'valueB', 'keyC': 'valueC' }; for (let key in obj) { console.log(key); console.log(obj[key]); }
 // let arr = [0, 1, 2, 3, 4, 5, 6, 7, 8,]; console.log(arr.slice(1, 5));
 // let value = 'CASAMENTO'; console.log(['CADEIRA', 'casa', 'CARRO',].some(a => value.toLowerCase().includes(a.toLowerCase()))); // true
 
 /* FORMATAR EM '0001' */ // number = String(number).padStart(4, '0'); 
-/* ESPERAR E EXECUTAR UMA VEZ */ // setTimeout(() => { console.log('OK'); }, 2000);
-/* ESPERAR E REPETIR */ // setInterval(() => { console.log('OK'); }, 2000);
-/* TIMEOUT */ // let timeout = setTimeout(() => { console.log('OK'); }, 2000); clearTimeout(timeout);
+/* ESPERAR E EXECUTAR UMA VEZ */ // setTimeout(() => { console.log('OK'); }, (2 * (1000)));
+/* ESPERAR E REPETIR */ // setInterval(() => { console.log('OK'); }, (2 * (1000)));
+/* TIMEOUT */ // let timeout = setTimeout(() => { console.log('OK'); }, (5 * (60 * 1000))); clearTimeout(timeout);
 /* LOOP 99 VEZES */ // for (let index = 0; index < 99; index++) { console.log('INDEX', index); };
 
 /* QUALQUER → BASE64 | BASE64 → UTF8 */ // let qualquerParaBase64 = Buffer.from('CASAMENTO').toString('base64'); console.log(`qualquerParaBase64 ${qualquerParaBase64}`) // npm prune (REMOVER BIBLIOTECAS DESNCESSÁRIAS)
@@ -25,15 +29,15 @@ console.log = function () { runClearConsole.apply(console, arguments); msgQtd++;
 function getTypeof(v) { // 'number' / 'nan' / 'string' / 'boolean' / 'null' / 'undefined' / 'array' / 'object' / 'buffer' / 'function' / 'date' / 'set' / 'map' / 'regexp' / 'error' → let a = getTypeof(false)
     let t = typeof v; return (t !== 'object') ? ((t === 'number') ? (Number.isNaN(v) ? 'nan' : 'number') : t) : (v === null) ? 'null' : ((eng ? (v instanceof Uint8Array) : Buffer.isBuffer(v)) ? 'buffer' :
         (Array.isArray(v)) ? 'array' : (v instanceof Error) ? 'error' : (v instanceof Date) ? 'date' : (v instanceof Set) ? 'set' : (v instanceof Map) ? 'map' : (v instanceof RegExp) ? 'regexp' : 'object');
-} // eslint-disable-next-line no-undef
-function codeStop(msg = 'QUEBRANDO CÓDIGO...') { if (!eng && msg === true) { ignoreThis; } console.log(msg); if (eng) { chrome.management.setEnabled(chrome.runtime.id, false); } else { process.exit(); } }
+} function codeStop(msg = 'QUEBRANDO CÓDIGO...') { if (!eng && msg === true) { ignoreThis; } console.log(msg); if (eng) { chrome.management.setEnabled(chrome.runtime.id, false); } else { process.exit(); } }
 // codeStop(`Parada forçada pelo TAL`); /* → ENCERRAR O CÓDIGO */ codeStop(true); /* → QUEBRA O CÓDIGO */
 
-// *-*-*-*-*-*-* eng: [true|false → CHROME|NODE/GOOGLE/BROWSER] *-*-*-*-*-*-* engType: [1|2|3|4 → CHROME|NODE|GOOGLE|BROWSER] *-*-*-*-*-*-*
-let _fs, cs, x; globalThis['fileProjetos'] = 'x'; globalThis['fileChrome_Extension'] = 'x'; globalThis['letter'] = 'x'; globalThis['fileWindows'] = 'x'; function getEngType() {
-    let x = 'undefined'; x = typeof chrome !== x && chrome.runtime ? 1 : typeof global !== x ? 2 : typeof ScriptApp !== x ? 3 : 4; return { 'engType': x, 'engName': ['CHROME', 'NODE', 'GOOGLE', 'BROWSER',][x - 1], };
+// *-*-*-*-*-*-* eng: [true|false → CHROME|NODE/GOOGLE/HTML] *-*-*-*-*-*-* engType: [1|2|3|4 → CHROME|NODE|GOOGLE|HTML] *-*-*-*-*-*-*
+let x; globalThis['cs']; function getEngType() {
+    let x = 'undefined'; x = typeof chrome !== x && chrome.runtime ? 1 : typeof global !== x ? 2 : typeof ScriptApp !== x ? 3 : 4; return { 'engType': x, 'engName': ['CHROME', 'NODE', 'GOOGLE', 'HTML',][x - 1], };
 } x = getEngType(); globalThis['engType'] = x.engType; globalThis['engName'] = x.engName; if (!eng) {
-    process.noDeprecation = true; _fs = await import('fs'); globalThis['_fs'] = _fs; let m; m = await import('path'); globalThis[`_path`] = m; m = await import('module'); globalThis[`_createRequire`] = m.createRequire;
+    process.noDeprecation = true; let _fsTemp = await import('fs'); globalThis['_fs'] = _fsTemp; let m; m = await import('path'); globalThis[`_path`] = m; m = await import('module');
+    globalThis[`_createRequire`] = m.createRequire;
 } globalThis['currentFile'] = function (err) { return err.stack.match(/([^ \n])*([a-z]*:\/\/\/?)*?[a-z0-9\/\\]*\.js/ig)?.[0].replace(/[()]/g, ''); }; globalThis['firstFileCall'] = currentFile(firstFileCall);
 
 // DEFINIR → LETTER | ROOT | FUNCTION | PROJECT | FILE | LINE
@@ -48,10 +52,11 @@ if (engType < 3) {
     let secPing = conf.secPing, secPingTimeout = conf.secPingTimeout, secLoop = conf.secLoop, kbPartsMessage = conf.kbPartsMessage, minClearPartsMessages = conf.minClearPartsMessages;
     let devMy = conf.devMy, par0 = `${conf.par0}`, par1 = `${securityPass}-${conf.par1}`, par2 = `${securityPass}-${conf.par2}`, par3 = `${securityPass}-${conf.par3}`, par4 = `${securityPass}-${conf.par4}`;
     let par5 = `${securityPass}-${conf.par5}`, par6 = `${securityPass}-${conf.par6}`, par7 = `${securityPass}-${conf.par7}`, par8 = `${conf.par8}`, hostPort = `${letter === 'D' ? hostPortLoc : hostPortWeb}/?roo=`;
-    let devSend = `${hostPort}${devMy}-${devices[0][0]}-${devices[0][2][0]}`, devSever = `${hostPort}${devMaster}-${devices[eng ? 0 : 1][0]}-${devices[eng ? 0 : 1][2][0]}`;
-    gW = { // MANTER APÓS O 'devSend'
+    let devSend = `${hostPort}${devMy}-${devices[0][0]}-${devices[0][2][0]}`, devSever = `${hostPort}${devMaster}-${devices[eng ? 0 : 1][0]}-${devices[eng ? 0 : 1][2][0]}`, par9 = `${conf.par9}`, par10 = `${conf.par10}`;
+    let par11 = `${conf.par11}`;
+    globalThis['gW'] = { // MANTER APÓS O 'devSend'
         ...gW, securityPass, 'serverWeb': serverWeb.host, portWeb, 'serverLoc': serverLoc.host, serverWebEstrelar, portLoc, devMaster, 'devSlave': engName, devSend, devices, hostPortWeb, hostPortLoc, secConnect,
-        secReconnect, secRetWebSocket, secPing, secPingTimeout, secLoop, kbPartsMessage, minClearPartsMessages, devMy, devSever, par0, par1, par2, par3, par4, par5, par6, par7, par8,
+        secReconnect, secRetWebSocket, secPing, secPingTimeout, secLoop, kbPartsMessage, minClearPartsMessages, devMy, devSever, par0, par1, par2, par3, par4, par5, par6, par7, par8, par9, par10, par11,
         'cloneProject': firstFileCall.split('/').pop().replace('_TEMP', '').replace('.js', ''), // ← 'server', 'serverC6', 'serverC6_New2' ...
     };
 }
@@ -136,11 +141,16 @@ function fDirname(p) { p = p.replace(/\\/g, '/'); if (!p.includes('/')) { return
 // JUNTAR PATH COM NOME DO ARQUIVO
 function fJoin(...parts) { return parts.map(p => p.replace(/\\/g, '/').replace(/\/+$/g, '')).filter(Boolean).join('/').replace(/\/+/g, '/'); } // console.log(fJoin('D:/PASTA_1/PASTA_2//', 'arquivo.txt'));
 
-let gO = { 'inf': {}, }; Object.assign(globalThis, {
-    /* ## VARIÁVEIS */       cs,
-    /* ## GLOBAL OBJECT */   gO, // gOList,
+// PARSE DE PARAMETROS (URL OU STRING)
+function paramsObj(s) {
+    if (!s || typeof s !== 'string') { return {}; } let q = s.split('?').pop(); let obj = {};
+    for (let p of q.split('&')) { if (!p || !p.includes('=')) { continue; } let [k, v = '',] = p.split('='); if (!k) { continue; } obj[decodeURIComponent(k)] = decodeURIComponent(v); } return obj;
+} // console.log(paramsObj(`google.com/?key1=VAL1&key2=VAL2&key3=`)); console.log(paramsObj(`key1=VAL1&key2=VAL2&key3=`));
+
+globalThis['gO'] = { 'inf': {}, }; Object.assign(globalThis, {
+    /* ## GLOBAL OBJECT */   // gOList,
     /* ## LISTENER */        listenerMonitorar, listenerAcionar,
-    /* ## FUNÇÕES */         clearConsole, getTypeof, codeStop, rateLimiter, randomNumber, randomId, awaitTimeout, startupTime, importFun, importLibs, replaceVars, stringGet, fDirname, fJoin,
+    /* ## FUNÇÕES */         clearConsole, getTypeof, codeStop, rateLimiter, randomNumber, randomId, awaitTimeout, startupTime, importFun, importLibs, replaceVars, stringGet, fDirname, fJoin, paramsObj,
 });
 
 // ********************** OBRIGATÓRIO FICAR APOS O EXPORT GLOBAL (não subir!!!) NÃO USAR !!! | NÃO COMENTAR! NECESSÁRIO QUANDO NÃO FOR 'Chrome_Extension'
@@ -155,3 +165,22 @@ function all1() { } globalThis['all1'] = all1; if (!globalThis.all2 && engType <
 // })()
 
 
+// -----------------------------------------------------------------------------------------------------------------------------------
+
+// async function fun1(inf) { await new Promise(r => setTimeout(r, 3000)); return { 'name': 'fun1', inf, }; }
+// async function fun2(inf) { await new Promise(r => setTimeout(r, 4000)); return { 'name': 'fun2', inf, }; }
+// async function fun3(inf) { await new Promise(r => setTimeout(r, 1000)); return { 'name': 'fun3', inf, }; }
+
+// let response, promisesArr, pars = [{ 'a': 'b', }, { 'c': 'd', },];
+
+// /* MESMA FUNÇÃO: NÃO */ promisesArr = [[fun1, pars[0],], [fun2, pars[1],], [fun3, pars[1],],];
+// /* MESMA FUNÇÃO: SIM */ promisesArr = pars.map(p => [fun1, p,]);
+
+// ESPERAR TODAS RETORNAREM (NA ORDEM DE RETORNO)
+// let response = await(async () => {
+//     let arr = []; await Promise.allSettled(promisesArr.map(([f, a,], idx) => f(a).then(r => arr.push({ idx, 'ret': true, 'msg': 'OK', 'res': r, })).
+//         catch(e => arr.push({ idx, 'ret': false, 'msg': `ERRO | ${e}`, })))); return arr;
+// })();
+// console.log('RESULTADOS:', response);
+
+// -----------------------------------------------------------------------------------------------------------------------------------

@@ -8,7 +8,7 @@ let e = currentFile(new Error()), ee = e;
 async function tryRatingSet(inf = {}) {
     let ret = { 'ret': false, }; e = inf.e || e;
     try {
-        let { hitApp = 'x', elements = [], path = false, process = false, rA = false, } = inf;
+        let { hitApp = 'x', elements = [], path = false, processOk = false, rA = false, } = inf;
 
         // RETORNAR CASO O OBJ DO HITAPP NÃO EXISTA
         if (!acts[hitApp]) { ret['msg'] = `TRYRATING SET: ERRO | FALTA O OBJ DO HITAPP '${hitApp}'`; return ret; }
@@ -17,13 +17,13 @@ async function tryRatingSet(inf = {}) {
             return path.split('.').reduce((acc, key) => { let match = key.match(/(\w+)\[(\d+)\]/); if (match) { let [, arrayKey, index,] = match; return acc[arrayKey]?.[Number(index)]; } return acc?.[key]; }, obj);
         }
 
-        let timeNow, timeStart = Number(dateHour().res.tim), elementsObj = acts[hitApp].elementsObj, timeSec = process ? 3 : acts[hitApp].timeSec;
+        let timeNow, timeStart = Number(dateHour().res.tim), elementsObj = acts[hitApp].elementsObj, timeSec = processOk ? 3 : acts[hitApp].timeSec;
         let target = `*${hitApp}/page_tryrating.mhtml*`; // target = '*tryrating.com*'
 
         // CAPTURAR INPUTS E ENVIAR PARA AI
-        if (path || process) {
-            rA = process;
-            if (path && !process) {
+        if (path || processOk) {
+            rA = processOk;
+            if (path && !processOk) {
                 let retFile = await file({ e, 'action': 'read', path, }); if (!retFile.ret) { return retFile; } else { retFile = JSON.parse(retFile.res); }
                 let promptText = acts[hitApp].promptText, inputs = acts[hitApp].inputs, promptQuestion = acts[hitApp].promptQuestion;
 
@@ -39,19 +39,19 @@ async function tryRatingSet(inf = {}) {
             // AÇÕES DO HITAPP
             if (hitApp === 'Ratingoftransformedtext') {
                 // →→→→→→→→→→→ Ratingoftransformedtext
-                process = ['yes_it_does',].includes(rA.toLowerCase()) ? 'yes_it_does' : ['no_it_does_not',].includes(rA.toLowerCase()) ? 'no_it_does_not' : false;
-                elements = [{ 'element': 'does_the_output_meet_the_expectation', 'elements1': [{ 'element1': process, 'actions': [{ 'awaitFor': undefined, 'value': undefined, },], },], },];
+                processOk = ['yes_it_does',].includes(rA.toLowerCase()) ? 'yes_it_does' : ['no_it_does_not',].includes(rA.toLowerCase()) ? 'no_it_does_not' : false;
+                elements = [{ 'element': 'does_the_output_meet_the_expectation', 'elements1': [{ 'element1': processOk, 'actions': [{ 'awaitFor': undefined, 'value': undefined, },], },], },];
             } else if (hitApp === 'BroadMatchRatings') {
                 // →→→→→→→→→→→ BroadMatchRatings
-                process = ['good',].includes(rA.toLowerCase()) ? 'good' : ['acceptable',].includes(rA.toLowerCase()) ? 'acceptable' : ['bad',].includes(rA.toLowerCase()) ? 'bad' : false;
+                processOk = ['good',].includes(rA.toLowerCase()) ? 'good' : ['acceptable',].includes(rA.toLowerCase()) ? 'acceptable' : ['bad',].includes(rA.toLowerCase()) ? 'bad' : false;
                 elements = [
-                    { 'element': 'question_1', 'elements1': [{ 'element1': process, 'actions': [{ 'awaitFor': undefined, 'value': undefined, },], },], },
-                    { 'element': 'comments', 'elements1': [{ 'element1': `${process}_${randomNumber(1, 3)}`, 'actions': [{ 'awaitFor': undefined, 'value': undefined, },], },], },
+                    { 'element': 'question_1', 'elements1': [{ 'element1': processOk, 'actions': [{ 'awaitFor': undefined, 'value': undefined, },], },], },
+                    { 'element': 'comments', 'elements1': [{ 'element1': `${processOk}_${randomNumber(1, 3)}`, 'actions': [{ 'awaitFor': undefined, 'value': undefined, },], },], },
                 ];
             }
 
             // RETORNAR SE O HITAPP ESTIVER ERRADO OU A RESPOSTA DA AI FOR INVÁLIDA
-            if (!process) { ret['msg'] = `TRYRATING SET: ERRO | HITAPP ERRADO OU RESPOSTA INVÁLIDA`; return ret; }
+            if (!processOk) { ret['msg'] = `TRYRATING SET: ERRO | HITAPP ERRADO OU RESPOSTA INVÁLIDA`; return ret; }
 
             // ****************************************** ENVIAR RESPOSTA ******************************************
             elements.push({ 'element': 'submit_rating', 'elements1': [{ 'element1': 'down', 'actions': [{ 'awaitFor': undefined, 'value': undefined, },], },], });

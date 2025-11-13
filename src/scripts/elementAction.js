@@ -1,8 +1,10 @@
 // → NO FINAL DO ARQUIVO
 
-async function runElementAction(inf = {}) {
+let funString; async function runElementAction(inf = {}) {
+    if (!funString) { funString = elementAction.toString(); }
     let { e, paramsArr, urlTarget, page, } = inf; let promise = paramsArr.map(parOk => eng ? chromeActions({ e, action: 'injectNew', target: urlTarget, fun: elementAction, funInf: { 'newAction': true, ...parOk, }, })
-        : page.evaluate(async (fun, pars) => (await (new Function('return ' + fun)())(pars)), elementAction.toString(), { 'newAction': true, ...parOk, })
+        // : page.evaluate(async (fun, pars) => (await (new Function('return ' + fun)())(pars)), elementAction.toString(), { 'newAction': true, ...parOk, })
+        : page.evaluate(async (fun, pars) => (await (new Function('return ' + fun)())(pars)), funString, { 'newAction': true, ...parOk, })
     ); return await Promise.race(promise);
 } globalThis['runElementAction'] = runElementAction;
 
@@ -67,7 +69,7 @@ async function elementAction(inf = {}) {
     if (indexTarget > -1) { elementos = [elementos[indexTarget],]; } else if (indexTarget === '>') { elementos = [elementos[elementos.length - 1],]; } elementos = elementos.slice(0, maxElements || elementos.length);
     for (let el of elementos) {
         for (let [idx, valueOk,] of actions.entries()) {
-            let { action, elementValue, elementIndex, attribute, time, text, textId, lowerCase, } = valueOk;
+            let { action, elementValue, elementIndex, attribute, time, text, textId, lowerCase, attributesNames = [], attributesValues = [], } = valueOk;
             try {
                 if (!el.isConnected) { resultados.push({ 'ret': false, 'msg': `ELEMENT ACTION [${action}]: ERRO | ELEMENTO NÃO ESTÁ MAIS NO DOM (${paramId})`, }); continue; }
                 // -------------------
@@ -85,7 +87,8 @@ async function elementAction(inf = {}) {
                     resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${action}]: OK (${paramId})`, 'res': el.outerHTML || el.textContent || '', });
 
                 } else if (action === 'elementGetValue') {
-                    resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${action}]: OK (${paramId})`, 'res': el.value?.trim() ? el.value : el.textContent, });
+                    // resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${action}]: OK (${paramId})`, 'res': el.value?.trim() ? el.value : el.textContent, }); // ANTIGO
+                    resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${action}]: OK (${paramId})`, 'res': el.type === 'checkbox' ? el.checked : (el.value?.trim() ? el.value : el.textContent?.trim()), }); // NOVO
 
                 } else if (action === 'attributeGetValue') {
                     if (attribute) { resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${action}]: OK (${paramId})`, 'res': el.getAttribute(attribute), }); }
@@ -137,6 +140,14 @@ async function elementAction(inf = {}) {
                         } else { errOption = `Informar 'elementValue' ou 'elementIndex' (${paramId})`; }
                     } else { errOption = `Elemento não é <select> (${paramId})`; } if (errOption) { resultados.push({ 'ret': false, 'msg': `ELEMENT ACTION [${action}]: ERRO | ${errOption}`, }); }
                     else { resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${action}]: OK (${paramId})`, }); }
+
+
+                } else if (action === 'elementGetProperties') {
+                    let props = {}; for (let attr of el.attributes) {
+                        let nomeOk = attributesNames.includes(attr.name); let valorOk = attributesValues.includes(attr.value);
+                        if ((attributesNames.length === 0 && attributesValues.length === 0) || nomeOk || valorOk) { props[attr.name] = attr.value; }
+                    } resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${action}]: OK (${paramId})`, 'res': props, });
+
 
                 } else {
                     // ------------------------------------------------------------------------------------------------------------------------
@@ -210,6 +221,16 @@ globalThis['elementAction'] = elementAction;
 //         'maxAwaitMil': 1000, 'xpath': `/html/body/div[4]/div[1]/div/div/div/div/div[3]/div[2]/div/div/div/div/nav/ul/li[6]/a`,
 //     }, 'actions': [{ 'action': `attributeGetValue`, 'attribute': `role`, },],
 // }; // res = await runElementAction({ e, urlTarget, page, 'paramsArr': [params,], }); res = res?.res || res; console.log(res);
+
+// // ELEMENTO: PEGAR PROPRIEDADES (ATRIBUTO NOME E ATRIBUTO VALOR)
+// params = {
+//     'paramId': `TESTE`, 'element': {
+//         'maxAwaitMil': 1000, 'tag': `label`, 'content': `Relevance`,
+//         'directionA': +1, 'maxElements': 1, 'indexTargetA': 2, 'properties': [
+//             { 'attributeName': `class`, 'attributeValue': `field-label`, },
+//         ],
+//     }, 'actions': [{ 'action': `elementGetProperties`, 'attributesNames': ['for',], 'attributesValues': ['field-label',], },],
+// }; res = await runElementAction({ e, urlTarget, page, 'paramsArr': [params,], }); res = res?.res || res; console.log(res);
 
 // // ELEMENTO: DEFINIR VALOR
 // params = {

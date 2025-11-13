@@ -23,6 +23,7 @@ async function logConsole(inf = {}) {
                 'vermelho': '\x1b[31m',
                 'reset': '\x1b[0m',
             };
+
             let textColored = text; textColored = textColored.replace(/<(\w+)>([\s\S]*?)<\/\1>/g, (match, color, data) => {
                 if (color.toLowerCase() in colors) {
                     return `${colors[color.toLowerCase()]}${data}${colors.reset}`;
@@ -39,7 +40,7 @@ async function logConsole(inf = {}) {
         txt = typeof txt === 'object' ? JSON.stringify(txt) : txt;
         let { day, mon, hou, min, sec, mil, /* hou12, houAmPm, */ } = time;
         let currentDateHour = `${hou}:${min}:${sec}.${mil}`;
-        let breakLineSta = breakLine ? '\n' : ' ', breakLineEnd = breakLine ? '\n' : '';
+        let breakLineSta = breakLine ? '\n' : ' ', breakLineEnd = breakLine ? `\n${eng ? '\n' : ''}` : '';
         colorConsole({
             // FORMATO: 24 HORAS (11h, 12h, 13h, 14h...)
             'text': `<verde>→ ${day}/${mon} ${currentDateHour}</verde> <azul>${projectConsole}</azul> <amarelo>${fileCall}</amarelo>${breakLineSta}${txt}${breakLineEnd}`,

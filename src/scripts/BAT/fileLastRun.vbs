@@ -1,3 +1,6 @@
+rem RESOLVER ERRO DO ARQUIVO CORROMPIDO E CRIAR OUTRO
+On Error Resume Next
+
 rem COMO USAR
 rem %fileLastRun% "CMD_TOGGLE" "nodeWebSocket_server"
 

@@ -6,8 +6,8 @@ let arrGlobal = [
   'XmlService',
 
   // VARIÁVEIS GLOBAIS
-  'devSend', 'wsClients', 'wsClientLoc', 'eng', 'engType', 'engName', 'cng', 'letter', 'conf', 'infGlobal', 'gORem', 'gOAdd', 'csf', 'gW', 'legacy', 'platforms', 'ori', 'des',
-  'portStopwatch', 'firstFileCall',
+  'eng', 'engType', 'engName', 'letter', 'infGlobal', 'gORem', 'gOAdd', 'csf', 'gW', 'legacy', 'platforms', 'ori', 'des',
+  'portStopwatch', 'firstFileCall', 'ignoreThis',
 
   // VARIÁVEIS DO SISTEMA
   'fileChrome_Extension', 'fileProjetos', 'fileWindows',
@@ -17,24 +17,24 @@ let arrGlobal = [
 
   // ### BIBLIOTECAS / NATIVO → NODE
   '_WebSocketServer', '_WebSocket', '_fs', '_path', '_cheerio', '_clipboardy', '_http', '_exec', '_google', '_createHash', '_puppeteer', '_net', '_getFolderSize', 'process',
-  'Buffer', '_parse', '_stackTrace', '_auth', '_sheets', '_clipboard', '_createRequire', '_axios', '_createWriteStream', '_getVideoDurationInSeconds', '_https', '_m3u8Parser',
-  '_createServer', '_createInterface', '_zlib',
+  'Buffer', '_parse', '_stackTrace', '_auth', '_sheets', '_clipboard', '_createRequire', '_axios', '_createWriteStream', '_getVideoDurationInSeconds', '_https', '_m3u8Parser', '_URL',
+  '_createServer', '_createInterface', '_zlib', '_execFile', '_spawn',
 
   // GLOBAL OBJECT
   'cs', 'gO', 'gOList',
 
   // FUNÇÕES
   'clearConsole', 'getTypeof', 'codeStop', 'rateLimiter', 'randomNumber', 'randomId', 'awaitTimeout', 'startupTime', 'importFun', 'importLibs', 'replaceVars', 'stringGet', 'fDirname',
-  'fJoin',
+  'fJoin', 'paramsObj',
 
   // ### BIBLIOTECAS / NATIVO → GOOGLE 
   'UrlFetchApp', 'Browser',
 
   // funções globais → [Chrome_Extension]
   'api', 'chat', 'chromeActions', 'client', 'clipboard', 'commandLine', 'configStorage', 'dateHour', 'devFun', 'file', 'getPath', 'googleSheets', 'googleTranslate', 'tableHtmlToJson',
-  'log', 'logConsole', 'messageSend', 'messageReceived', 'notification', 'objFilter', 'regex', 'regexE', 'tabActions', 'GPT4js', 'listenerAcionar',
-  'listenerMonitorar', 'chromeActionsNew', 'taskInfTryRating', 'zachey01___gpt4free_js', 'background', 'command1', 'audioTranscribe',
-  'command2', 'tryRatingComplete', 'clientInputChrome', 'restartCode', 'indicationCheck', 'scheduleRun', 'z_backup', 'z_testeElementAction',
+  'log', 'logConsole', 'messageSend', 'messageReceived', 'notification', 'objFilter', 'regex', 'regexE', 'tabActions', 'GPT4js', 'listenerAcionar', 'listenerMonitorar',
+  'chromeActionsNew', 'taskInfTryRating', 'zachey01___gpt4free_js', 'background', 'command1', 'audioTranscribe', 'claroAuth', 'command2', 'tryRatingComplete',
+  'clientInputChrome', 'restartCode', 'indicationCheck', 'scheduleRun', 'z_backup', 'z_testeElementAction', 'getPathNew', 'googleSheetsNew', 'newLeadUraReversa',
 
   // funções globais → [Sniffer_Python]
   'ewoq', 'scilliance', 'tryRating', 'performTask', 'correiosServer', 'targetAlert',
@@ -71,48 +71,39 @@ export let jsConfig = [
     // VARIÁVEIS GLOBAIS
     'languageOptions': { 'globals': arrGlobalObj, },
 
+    'plugins': {
+      'custom': {
+        'rules': {
+
+          'regraA': { // OK
+            'meta': { 'messages': { 'x': `VARIÁVEL GLOBAL '{{name}}'`, }, },
+            create(context) {
+              let globalSet = new Set(arrGlobal.filter(v => !['a',].includes(v)));
+              let reportIfGlobal = (node, varName) => { if (globalSet.has(varName)) { context.report({ node, 'messageId': 'x', 'data': { 'name': varName, }, }); } };
+              return {
+                AssignmentExpression(node) { if (node.left.type === 'Identifier') { reportIfGlobal(node, node.left.name); } },
+                VariableDeclarator(node) { if (node.id.type === 'Identifier') { reportIfGlobal(node, node.id.name); } },
+              };
+            },
+          },
+
+        },
+      },
+    },
+
     'rules': {
+      // ATIVAR REGRAS PERSONALIZADAS
+      'custom/regraA': 'error',
+
       // ##################################################################################################################################################################
-
-      // ********************* [CORREÇÃO AUTOMÁTICA: SIM] ********************* 
-
-      // PONTO E VÍRGULA NO FINAL
-      'semi': 'error',
-
-      //   === e !==    EM VEZ DE    == e !=
-      'eqeqeq': 'error',
-
-      // VÍRGULA NO FINAL
-      'comma-dangle': ['error', { 'objects': 'always', 'arrays': 'always', 'imports': 'never', 'exports': 'never', 'functions': 'never', },],
-
-      // 'return' DESNECESSÁRIO
-      'no-useless-return': 'error',
-
-      // REDUNDÂNCIA → let casa = true; let nova = casa ? true : false
-      'no-unneeded-ternary': ['error',],
-
-      // 'if' DESNECESSÁRIO
-      'no-lonely-if': 'error',
-
-      // REUTILIZAR VARIÁVEIS COM O MESMO NOME DA CHAVE     let key = { 'a': 'b', }; let keyNew = { 'key': key, };  →  let key = { 'a': 'b', }; let keyNew = { key, };
-      'object-shorthand': 'error',
-
-      // IF ELSE SEM CHAVES if (foo) foo++  →  if (foo) { foo++; }
-      'curly': 'error',
-
-      // ';' DESNECESSÁRIO
-      'no-extra-semi': 'error',
-
-      // CHAVES E VALORES COM ASPAS SIMPLES
-      'quotes': ['error', 'single', {
-        'allowTemplateLiterals': true, // IGNORAR ENTRE CRASE → let variavel = { 'chave': `NOME ${pessoa} IDADE: 1`}
-        'avoidEscape': true,           // IGNORAR QUANDO INCLUIR ASPAS SIMPLES → let variavel = { 'chave': "O NOME 'ONU' É UMA SIGLA" }
-      },],
 
       // ********************* [CORREÇÃO AUTOMÁTICA: NÃO] ********************* 
 
-      // VARIÁVEIS NÃO USADAS E 'catchErr'
-      'no-unused-vars': ['error', { 'varsIgnorePattern': `^(${arrUnused.join('|')})$`, 'caughtErrors': 'none', },],
+      // [OK] === e !==    EM VEZ DE    == e !=
+      'eqeqeq': 'error',
+
+      // [OK] VARIÁVEIS NÃO USADAS E 'catchErr'
+      'no-unused-vars': ['error', { 'varsIgnorePattern': `^(${arrUnused.join('|')})$`, 'argsIgnorePattern': '_', 'caughtErrors': 'none', },],
 
       // VARIÁVEL NÃO DEFINIDA
       'no-undef': 'error',
@@ -166,6 +157,38 @@ export let jsConfig = [
         'ignoreTrailingComments': true,// IGNORAR COMENTÁRIO (//)
         'ignoreComments': true, // IGNORAR COMENTÁRIO (/* ALGO AQUI */ )
         'ignoreTemplateLiterals': true, // IGNORAR CRASE
+      },],
+
+      // ********************* [CORREÇÃO AUTOMÁTICA: SIM] ********************* 
+
+      // PONTO E VÍRGULA NO FINAL
+      'semi': 'error',
+
+      // VÍRGULA NO FINAL
+      'comma-dangle': ['error', { 'objects': 'always', 'arrays': 'always', 'imports': 'never', 'exports': 'never', 'functions': 'never', },],
+
+      // 'return' DESNECESSÁRIO
+      'no-useless-return': 'error',
+
+      // REDUNDÂNCIA → let casa = true; let nova = casa ? true : false
+      'no-unneeded-ternary': ['error',],
+
+      // 'if' DESNECESSÁRIO
+      'no-lonely-if': 'error',
+
+      // REUTILIZAR VARIÁVEIS COM O MESMO NOME DA CHAVE     let key = { 'a': 'b', }; let keyNew = { 'key': key, };  →  let key = { 'a': 'b', }; let keyNew = { key, };
+      'object-shorthand': 'error',
+
+      // IF ELSE SEM CHAVES if (foo) foo++  →  if (foo) { foo++; }
+      'curly': 'error',
+
+      // ';' DESNECESSÁRIO
+      'no-extra-semi': 'error',
+
+      // CHAVES E VALORES COM ASPAS SIMPLES
+      'quotes': ['error', 'single', {
+        'allowTemplateLiterals': true, // IGNORAR ENTRE CRASE → let variavel = { 'chave': `NOME ${pessoa} IDADE: 1`}
+        'avoidEscape': true,           // IGNORAR QUANDO INCLUIR ASPAS SIMPLES → let variavel = { 'chave': "O NOME 'ONU' É UMA SIGLA" }
       },],
 
       // ##################################################################################################################################################################

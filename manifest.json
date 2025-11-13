@@ -3,21 +3,13 @@
   "name": "# BOT",
   "version": "2",
   "description": "",
-  "host_permissions": [
-    "*://*/*"
-  ],
   "permissions": [
-    "webSocket",
-    "http://*/*",
-    "https://*/*",
-    "http://*",
-    "https://*",
+    "<all_urls>",
     "ws://*/*",
     "wss://*/*",
-    "*://*/*",
     "scripting",
-    "<all_urls>",
-	"proxy",
+    "webSocket",
+    "proxy",
     "identity",
     "downloads",
     "fileSystem",
@@ -114,14 +106,16 @@
   "content_scripts": [
     {
       "js": [
-        "./src/media/floatingButton/floating.js"
+        "./src/media/floatingButton/floating.js",
+        "./src/media/copyRun.js"
       ],
       "css": [
         "./src/media/floatingButton/styles.css"
       ],
       "matches": [
         "https://www.AAA.com/AAA*"
-      ]
+      ],
+      "run_at": "document_idle"
     }
   ]
 }

@@ -56,7 +56,7 @@ async function chat(inf = {}) {
             // if (objChatPython === false) { objChatPython = await configStorage({ e, 'action': 'get', 'key': 'chatPython', }); if (!objChatPython.ret) { return objChatPython; } else { objChatPython = objChatPython.res; } }
             // infApi = (infIsArray ? inf : [inf,]).map((v) => ({ e, 'method': 'POST', 'url': `http://127.0.0.1:${objChatPython.portServerHttp}/chat`, 'object': true, 'maxConnect': inf.maxConnect, 'body': { ...v, }, }));
             // retApi = await api(infApi); if (!retApi.ret) { return retApi; } retApi = retApi.res;
-            // retApi = retApi.map((v) => ({ 'index': v.index, 'ret': !v.ret ? false : v.res.body.ret, 'msg:': !v.ret ? v.msg : v.res.body.msg, ...(v?.res?.body?.ret && { 'res': v.res.body.res, }), }));
+            // retApi = retApi.map((v) => ({ 'index': v.idx, 'ret': !v.ret ? false : v.res.body.ret, 'msg:': !v.ret ? v.msg : v.res.body.msg, ...(v?.res?.body?.ret && { 'res': v.res.body.res, }), }));
             // ret['ret'] = retApi.some(v => v.ret === true);
             // ret['msg'] = `CHAT [PYTHON]: ${ret.ret ? 'OK' : `ERRO |${!infIsArray ? retApi[0].msg : ' ***'}`}`;
             // if (ret.ret) { ret['res'] = !infIsArray ? retApi[0].res : retApi; }

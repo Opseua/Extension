@@ -22,7 +22,7 @@ async function z_backup(inf = {}) {
         } function shouldExclude(fp, patterns, base) {
             let rel = _path.relative(base, fp).toLowerCase(), name = _path.basename(fp).toLowerCase(), full = fp.toLowerCase(); for (let pat of patterns) {
                 let clean = pat.replace(/^!/, '').replace(/^[\/\\]/, '').toLowerCase();
-                if (clean.includes('*')) { let regex = new RegExp('^' + clean.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$', 'i'); if (regex.test(name) || regex.test(rel)) { return true; } }
+                if (clean.includes('*')) { let regexOk = new RegExp('^' + clean.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$', 'i'); if (regexOk.test(name) || regexOk.test(rel)) { return true; } }
                 else if ([rel, name, full,].some(v => v.endsWith(clean) || v === clean)) { return true; }
             } return false;
         } function copyFile(src, dest) { let dir = fDirname(dest); if (!_fs.existsSync(dir)) { _fs.mkdirSync(dir, { 'recursive': true, }); } _fs.copyFileSync(src, dest); }

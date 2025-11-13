@@ -2,7 +2,7 @@
 // infCommandLine = {
 //     e, // 'notBackground': true, 'awaitFinish': true, 'notAdm': true, 'withCmd': true, 'view': false, 'delay': 0, 'terminalPath': `!letter!:/PASTA 1`, 'notReplaceVars': true,
 //     // ****************** NORMAL
-//     'command': `notepad`,
+//     // 'command': `notepad`,
 //     // ****************** CMD {withCmd → true}
 //     // 'command': `notepad & explorer`,
 //     // ****************** (SEM ESPAÇO)
@@ -13,6 +13,9 @@
 //     // 'command': `"D:/ARQUIVOS/BAT.bat" "AAA BBB"`,
 //     // 'command': `"%fileWindows%/PORTABLE_Notepad++/notepad++.exe" "D:/AAA BBB.txt"`,
 //     // 'command': `"!fileProjetos!/WebSocket/src/z_OUTROS_server/OFF.vbs" "FORCE_STOP" "AAA BBB"`,
+//     // ****************** (MESMO PROCESSO)
+//     'newMode': true, 'command': `!fileWindows!/PORTABLE_VLC/DISCO_C/Program Files/VideoLAN/VLC/vlc.exe`, // NÃO COLOCAR ENTRE ASPAS (O COMANDO NEM ARGS [EXCETO EM 'withCmd': true])!!!
+//     'args': [`D:\\ARQUIVOS\\PROJETOS\\IPTV\\logs\\Video\\#_NAO_COPIAR\\Streamings\\_10_22-10.06.54.511.ts`, `--meta-title=XX:XX:XX [PROV] (AAA) Telecine Action`, `--extraintf=http`, `--http-port=8081`,],
 // };
 // retCommandLine = await commandLine(infCommandLine); console.log(retCommandLine);
 
@@ -20,11 +23,11 @@ let e = currentFile(new Error()), ee = e; let libs = { 'child_process': {}, };
 async function commandLine(inf = {}) {
     let ret = { 'ret': false, }; e = inf.e || e;
     try {
-        /* IMPORTAR BIBLIOTECA [NODE] */ if (libs['child_process']) { libs['child_process']['exec'] = 1; libs = await importLibs(libs, 'commandLine'); }
+        /* IMPORTAR BIBLIOTECA [NODE] */ if (libs['child_process']) { libs['child_process']['exec'] = 1; libs['child_process']['execFile'] = 1; libs = await importLibs(libs, 'commandLine'); }
 
-        let { command = false, awaitFinish = false, notAdm = false, notBackground = false, view = false, delay = 0, terminalPath = false, withCmd = false, notReplaceVars = false, } = inf;
+        let { command, args = [], awaitFinish, notAdm, notBackground, view, delay = 0, terminalPath, withCmd = false, notReplaceVars, newMode, } = inf;
 
-        if (!command) { ret['msg'] = `COMMAND LINE: ERRO | INFORMAR O 'command'`; return ret; }
+        if (!command) { ret['msg'] = `COMMAND LINE: ERRO | INFORMAR O 'command'`; return ret; } if (newMode) { notBackground = true; if (view === undefined) { view = true; } }
 
         if (!notBackground) {
             // PARAMETROS
@@ -46,24 +49,36 @@ async function commandLine(inf = {}) {
             command = replaceVars({ 'content': command, });
         }
 
-        await new Promise((resolve) => {
-            let child = _exec(command, (error, stdout, stderr) => {
-                if (error) {
-                    ret['msg'] = `COMMAND LINE: ERRO | ${error}`;
-                    if (stderr) {
-                        ret['res'] = stderr;
+        if (!newMode) {
+            await new Promise((resolve) => {
+                let child = _exec(command, (error, stdout, stderr) => {
+                    if (error) {
+                        ret['msg'] = `COMMAND LINE: ERRO | ${error}`;
+                        if (stderr) { ret['res'] = stderr; }
+                    } else {
+                        ret['msg'] = 'COMMAND LINE: OK';
+                        if (stdout) { ret['res'] = stdout; }
+                        ret['ret'] = true;
                     }
-                } else {
-                    ret['msg'] = 'COMMAND LINE: OK';
-                    if (stdout) {
-                        ret['res'] = stdout;
-                    }
-                    ret['ret'] = true;
-                }
-                resolve();
+                    resolve();
+                });
+                child.stdout.on('data', () => { }); child.stderr.on('data', () => { });
             });
-            child.stdout.on('data', () => { }); child.stderr.on('data', () => { });
-        });
+        } else {
+            await new Promise((resolve) => {
+                _execFile(command, args, { 'windowsHide': !view, 'shell': withCmd, }, (error, stdout, stderr) => {
+                    if (error) {
+                        ret['msg'] = `COMMAND LINE: ERRO | ${error}`;
+                        if (stderr) { ret['res'] = stderr; }
+                    } else {
+                        ret['msg'] = 'COMMAND LINE: OK';
+                        if (stdout) { ret['res'] = stdout; }
+                        ret['ret'] = true;
+                    }
+                    resolve();
+                });
+            });
+        }
 
     } catch (catchErr) {
         let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];

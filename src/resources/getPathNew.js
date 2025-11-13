@@ -8,7 +8,7 @@ let qtd0 = 0; async function importFun(infOk = {}) {
         let retDevAndFun = await devFun({ 'e': import.meta.url, 'enc': true, 'data': { name, 'par': inf, }, }); return retDevAndFun;
     }
 } globalThis['importFun'] = importFun; function getEngType() {
-    let x = 'undefined'; x = typeof chrome !== x && chrome.runtime ? 1 : typeof global !== x ? 2 : typeof ScriptApp !== x ? 3 : 4; return { 'number': x, 'name': ['CHROME', 'NODE', 'GOOGLE', 'BROWSER',][x - 1], };
+    let x = 'undefined'; x = typeof chrome !== x && chrome.runtime ? 1 : typeof global !== x ? 2 : typeof ScriptApp !== x ? 3 : 4; return { 'number': x, 'name': ['CHROME', 'NODE', 'GOOGLE', 'HTML',][x - 1], };
 } globalThis['currentFile'] = function (err) { return err.stack.match(/([^ \n])*([a-z]*:\/\/\/?)*?[a-z0-9\/\\]*\.js/ig)?.[0].replace(/[()]/g, ''); }; // globalThis['firstFileCall'] = currentFile(firstFileCall);
 
 async function getPathNew(inf = {}) {

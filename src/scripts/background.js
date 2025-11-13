@@ -69,26 +69,38 @@ async function backgroundRun() {
 
         // MENUS DE CONTEXTO DO ÍCONE DA EXTENSÃO: CRIAR
         chrome.contextMenus.create({ 'id': 'item1', 'title': '🟢 Prompt', 'contexts': ['browser_action',], });
+
     } forceUpdate(); // FORÇAR ATUALIZAÇÕES NO CÓDIGO E NA EXTENSÃO AO APERTAR F5 NO CONSOLE
 
-    // -------------------- MENU DE CONTEXTO DO ÍCONE DA EXTENSÃO (OPÇÕES) ---------------------------------------------------------------------
-    // (Item normal)
-    // chrome.contextMenus.create({ 'id': 'item1', 'title': 'Item normal', 'contexts': ['browser_action',], });
-    // ------------------------------------------------------------------------------------------------------------------------------------------
-    // [Checkbox]
-    // chrome.contextMenus.create({ 'id': 'item2', 'type': 'checkbox', 'checked': true, 'title': 'Ativar modo X', 'contexts': ['browser_action',], });
-    // ------------------------------------------------------------------------------------------------------------------------------------------
-    // [Radio] Opção 1 | Opção 2
-    // chrome.contextMenus.create({ 'id': 'item3', 'type': 'radio', 'title': 'Opção 1', 'contexts': ['browser_action',], });
-    // chrome.contextMenus.create({ 'id': 'item4', 'type': 'radio', 'title': 'Opção 2', 'contexts': ['browser_action',], });
-    // --------------------------------------------------------------------------------------------
-    // {Separador}
+    // -------------------- MENU DE CONTEXTO [ÍCONE DA EXTENSÃO] OU [BOTÃO DIREITO]  ---------------------------------------------------------------------
+    // TIPOS DE 'contexts':
+    // | ---------------- | ----------------------------------------------------------------------
+    // | `all`            | Aparece em todos os contextos (exceto menus de ação do navegador)
+    // | `page`           | Em qualquer lugar da página
+    // | `selection`      | Quando o usuário seleciona texto
+    // | `link`           | Quando o usuário clica com o botão direito em um link
+    // | `editable`       | Em campos editáveis (input, textarea, contentEditable)
+    // | `browser_action` | Ícone da extensão na barra de ferramentas do Chrome
+    // | `page_action`    | Ícone da extensão na barra de ferramentas do Chrome (em páginas específicas)
+
+    // // (Item normal)
+    // chrome.contextMenus.create({ 'id': 'item1', 'title': 'TÍTULO_1', 'contexts': ['browser_action',], });
+    // // ------------------------------------------------------------------------------------------------------------------------------------------
+    // // [Checkbox]
+    // chrome.contextMenus.create({ 'id': 'item2', 'title': 'TÍTULO_2', 'contexts': ['browser_action',], 'type': 'checkbox', 'checked': true, });
+    // // ------------------------------------------------------------------------------------------------------------------------------------------
+    // // [Radio] Opção 1 | Opção 2
+    // chrome.contextMenus.create({ 'id': 'item3', 'title': 'TÍTULO_3', 'contexts': ['browser_action',], 'type': 'radio', });
+    // chrome.contextMenus.create({ 'id': 'item4', 'title': 'TÍTULO_4', 'contexts': ['browser_action',], 'type': 'radio', });
+    // // --------------------------------------------------------------------------------------------
+    // // {Separador}
     // chrome.contextMenus.create({ 'type': 'separator', 'contexts': ['browser_action',], });
-    // ------------------------------------------------------------------------------------------------------------------------------------------
+    // // ------------------------------------------------------------------------------------------------------------------------------------------
     // // [Submenu] Ajuda > Sobre o Google Chrome
-    // chrome.contextMenus.create({ 'id': 'submenu', 'title': 'Mais opções', 'contexts': ['browser_action',], });
-    // chrome.contextMenus.create({ 'id': 'submenu_item', 'parentId': 'submenu', 'title': 'Sub-opção 1', 'contexts': ['browser_action',], });
-    // -------------------- MENU DE CONTEXTO DO ÍCONE DA EXTENSÃO (AÇÕES) ---------------------------------------------------------------------
+    // chrome.contextMenus.create({ 'id': 'item5', 'title': 'TÍTULO_5', 'contexts': ['browser_action',], });
+    // chrome.contextMenus.create({ 'id': 'item6', 'title': 'TÍTULO_6', 'contexts': ['browser_action',], 'parentId': 'submenu', });
+
+    // -------------------- EXECUTAR AÇÕES DO MENU DE CONTEXTO [ÍCONE DA EXTENSÃO] OU [BOTÃO DIREITO] ------------------------------------------------
     chrome.contextMenus.onClicked.addListener(async function (...inf) {
         let [info, /* tab */,] = inf; if (info.menuItemId === 'item1') { command1({ 'origin': 'chrome', }); /* MOSTRAR prompt */ }
     });

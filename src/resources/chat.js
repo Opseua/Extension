@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 // * JS [CRHOME/NODE]
 // nextWay                → gpt-3.5-turbo / gpt-4o-free / gemini-pro   [https://github.com/zachey01/gpt4free.js]
 // openAi                 → gpt-4o-mini

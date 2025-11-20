@@ -23,7 +23,9 @@ async function getPathNew(inf = {}) {
         if (eng) {
             // →→→ CHROME
             devLetter = 'D'; devFunctions = chrome.runtime.id; let z = firstFileCallNew.stack.split('\n')[1].split(`://${devFunctions}/`); devRoot = z[0].split('at ')[1];
-            devProject = 'Downloads/Google Chrome%'; devServer = { 'devServer': z[1], 'devChromeUser': (await new Promise((r) => { chrome.identity.getProfileUserInfo(function (u) { r(u.email); }); })), };
+            devProject = 'Downloads/Google Chrome%'; devServer = {
+                'devServer': z[1], 'devChromeUser': (await new Promise((resolve) => { chrome.identity.getProfileUserInfo(u => { if (chrome.runtime.lastError) { resolve(null); return; } resolve(u.email || false); }); })),
+            };
 
             // CONFIG.json
             configOk = await fetch(chrome.runtime.getURL(fileConfig)); configOk = await configOk.text(); try { configOk = JSON.parse(configOk); config = configOk; } catch { }

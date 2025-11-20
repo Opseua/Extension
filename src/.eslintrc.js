@@ -7,7 +7,7 @@ let arrGlobal = [
 
   // VARIÁVEIS GLOBAIS
   'eng', 'engType', 'engName', 'letter', 'infGlobal', 'gORem', 'gOAdd', 'csf', 'gW', 'legacy', 'platforms', 'ori', 'des',
-  'portStopwatch', 'firstFileCall', 'ignoreThis',
+  'portStopwatch', 'firstFileCall', 'ignoreThis', 'isModeIncognito',
 
   // VARIÁVEIS DO SISTEMA
   'fileChrome_Extension', 'fileProjetos', 'fileWindows',
@@ -50,7 +50,7 @@ let arrGlobal = [
   'html', 'logsDel', 'messageAction', 'performanceDev', 'roomParams',
 
   // funções globais → [IPTV]
-  'parseM3u', 'chunksOrder', 'redeCanais', 'chunksGet',
+  'parseM3u', 'chunksOrder', 'redeCanais', 'chunksGet', 'fixChunkStart', 'fixChunkProcess',
 ],
 
   // ************** VARIÁVEIS NÃO USADAS **************
@@ -75,14 +75,23 @@ export let jsConfig = [
       'custom': {
         'rules': {
 
-          'regraA': { // OK
-            'meta': { 'messages': { 'x': `VARIÁVEL GLOBAL '{{name}}'`, }, },
-            create(context) {
+          'regraA': {
+            'meta': { 'messages': { 'x': `VARIÁVEL GLOBAL '{{name}}'`, }, }, create(context) {
               let globalSet = new Set(arrGlobal.filter(v => !['a',].includes(v)));
               let reportIfGlobal = (node, varName) => { if (globalSet.has(varName)) { context.report({ node, 'messageId': 'x', 'data': { 'name': varName, }, }); } };
               return {
                 AssignmentExpression(node) { if (node.left.type === 'Identifier') { reportIfGlobal(node, node.left.name); } },
                 VariableDeclarator(node) { if (node.id.type === 'Identifier') { reportIfGlobal(node, node.id.name); } },
+              };
+            },
+          },
+
+          'regraB': {
+            'meta': { 'messages': { 'x': `NÃO USAR 'const'`, }, 'fixable': 'code', }, create(context) {
+              return {
+                VariableDeclaration(node) {
+                  if (node.kind === 'const') { context.report({ node, 'messageId': 'x', fix(fixer) { let start = node.range[0]; return fixer.replaceTextRange([start, start + 5,], 'let '); }, }); }
+                },
               };
             },
           },
@@ -93,7 +102,7 @@ export let jsConfig = [
 
     'rules': {
       // ATIVAR REGRAS PERSONALIZADAS
-      'custom/regraA': 'error',
+      'custom/regraA': 'error', 'custom/regraB': 'error',
 
       // ##################################################################################################################################################################
 
@@ -142,10 +151,10 @@ export let jsConfig = [
       // 'consistent-return': 'error',
 
       // VARIÁVEIS EM camelCase E NÃO snack_case
-      'camelcase': ['error', { 'properties': 'always', },], // (IGNORAR [POR NO TOPO])   /* eslint-disable camelcase */
+      // 'camelcase': ['error', { 'properties': 'always', },], // (IGNORAR [POR NO TOPO])   /* eslint-disable camelcase */
 
       // GARANTIR USO DE 'let' E NÃO 'const' (IGNORAR [POR NO TOPO])   /* eslint-disable no-restricted-syntax */
-      'no-restricted-syntax': ['error', { 'selector': 'VariableDeclaration[kind=\'const\']', 'message': 'NÃO USAR \'const\'', },],
+      'no-restricted-syntax': ['error', { 'selector': `VariableDeclaration[kind='const']`, 'message': `NÃO USAR 'const'`, },],
 
       // LINHAS MUITO LONGAS (IGNORAR [POR NO TOPO])   /* eslint-disable max-len */
       'max-len': ['error', {

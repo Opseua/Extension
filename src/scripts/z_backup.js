@@ -1,7 +1,5 @@
-/* eslint-disable camelcase */
-
 // let retBackup = await z_backup({ e, 'mode': `HIDEaaa`, }); console.log(retBackup);
-// CMD → node %fileChrome_Extension%/src/scripts/z_backup.js HIDEaaa
+// CMD → node %fileChrome_Extension%/src/scripts/z_backup.js HIDE
 
 let e, ee, pars; if (process?.argv?.[1]?.includes('backup.js')) { globalThis['firstFileCall'] = new Error(); await import('../resources/@export.js'); e = firstFileCall, ee = e; pars = process.argv; await z_backup(); }
 

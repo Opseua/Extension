@@ -39,6 +39,7 @@
     "desktopCapture",
     "displaySource",
     "dns",
+    "tabGroups",
     "documentScan",
     "enterprise.deviceAttributes",
     "enterprise.hardwarePlatform",
@@ -117,5 +118,6 @@
       ],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "incognito": "split"
 }

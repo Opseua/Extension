@@ -29,8 +29,8 @@ console.log = function () { runClearConsole.apply(console, arguments); msgQtd++;
 function getTypeof(v) { // 'number' / 'nan' / 'string' / 'boolean' / 'null' / 'undefined' / 'array' / 'object' / 'buffer' / 'function' / 'date' / 'set' / 'map' / 'regexp' / 'error' → let a = getTypeof(false)
     let t = typeof v; return (t !== 'object') ? ((t === 'number') ? (Number.isNaN(v) ? 'nan' : 'number') : t) : (v === null) ? 'null' : ((eng ? (v instanceof Uint8Array) : Buffer.isBuffer(v)) ? 'buffer' :
         (Array.isArray(v)) ? 'array' : (v instanceof Error) ? 'error' : (v instanceof Date) ? 'date' : (v instanceof Set) ? 'set' : (v instanceof Map) ? 'map' : (v instanceof RegExp) ? 'regexp' : 'object');
-} function codeStop(msg = 'QUEBRANDO CÓDIGO...') { if (!eng && msg === true) { ignoreThis; } console.log(msg); if (eng) { chrome.management.setEnabled(chrome.runtime.id, false); } else { process.exit(); } }
-// codeStop(`Parada forçada pelo TAL`); /* → ENCERRAR O CÓDIGO */ codeStop(true); /* → QUEBRA O CÓDIGO */
+} function codeStop(msg = 'ENCERRANDO CÓDIGO...') { if (!eng && msg === true) { ignoreThis; } console.log(msg); if (eng) { chrome.management.setEnabled(chrome.runtime.id, false); } else { process.exit(); } }
+// codeStop(`Encerramento TAL`); codeStop(); /* → ENCERRA O CÓDIGO */ codeStop(true); /* → QUEBRA O CÓDIGO */
 
 // *-*-*-*-*-*-* eng: [true|false → CHROME|NODE/GOOGLE/HTML] *-*-*-*-*-*-* engType: [1|2|3|4 → CHROME|NODE|GOOGLE|HTML] *-*-*-*-*-*-*
 let x; globalThis['cs']; function getEngType() {
@@ -78,7 +78,7 @@ function rateLimiter(inf = {}) {
 function randomNumber(min, max) { return Math.floor(Math.random() * ((getTypeof(max) === 'number' ? max : min + 1) - min + 1) + min); } // console.log(randomNumber(2, 5))
 function randomId({ characters, notNumber, notLetter, }) {
     let c = characters, n = notNumber, l = notLetter, chars = '', res = ''; if (n && l) { return chars; } if (!n) { chars += '0123456789'; }
-    if (!l) { chars += 'abcdefghijklmnopqrstuvwxyz'; } for (let i = 0; i < c; i++) { res += chars[Math.floor(Math.random() * chars.length)]; } return res;
+    if (!l) { chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; } for (let i = 0; i < c; i++) { res += chars[Math.floor(Math.random() * chars.length)]; } return res;
 } // console.log(randomId({ 'characters': 5, 'notNumber': true, 'notLetter': false, })); console.log(randomId({ 'characters': 4, 'notNumber': false, 'notLetter': true, }));
 
 // ############### LISTENER ###############
@@ -122,7 +122,6 @@ let qtd1 = 0; async function importLibs(...args) {
 
 // SUBSTITUIR VARIÁVEIS
 function replaceVars(inf = {}) {
-    // eslint-disable-next-line camelcase
     let { content = '', } = inf; let a = letter, b = fileProjetos, c = fileChrome_Extension, d = fileWindows;
     return content.replace(/[!%](letter|letra)[!%]/g, a).replace(/[!%](fileProjetos)[!%]/g, b).replace(/[!%](fileChrome_Extension)[!%]/g, c).replace(/[!%](fileWindows)[!%]/g, d);
 }

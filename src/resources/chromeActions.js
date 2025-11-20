@@ -8,14 +8,18 @@ async function chromeActions(inf = {}) {
     try {
         let {
             action, color, text, title, url, cookieSearch, target, elementName, elementValue, attribute,
-            attributeAdd, content, tag, attributeValue, attributeValueAdd, tagFather, fun, funInf = {}, awaitElementMil,
+            attributeAdd, content, tag, attributeValue, attributeValueAdd, tagFather, fun, funInf = {}, awaitElementMil, typeWindow, typeTab, newMode = false,
         } = inf;
 
         let retTabS, code = '', retExeS, tabId, divTemp;
 
         if (action === 'badge') {
-            action = chrome.browserAction; if (color) { action.setBadgeBackgroundColor({ color, }); } if (text || text === '') { action.setBadgeText({ text, }); }
-            ret['msg'] = `CHROME ACTIONS [BADGE]: OK`; ret['ret'] = true;
+            action = chrome.browserAction; if (!newMode) { if (color) { action.setBadgeBackgroundColor({ color, }); } if (text || text === '') { action.setBadgeText({ text, }); } } else { // ← MODO ANTIGO
+                let retTabActions = await tabActions({ 'filters': {}, }); if (!retTabActions.ret) { return retTabActions; } let tabs = retTabActions.res.filter(tab => { // MODO NOVO
+                    let pass = true; pass = pass && (tab.incognito === isModeIncognito); if (typeWindow && getTypeof(typeWindow) === 'string') { pass = pass && (tab[typeWindow] === true); }
+                    if (typeTab && getTypeof(typeTab) === 'string') { pass = pass && (tab[typeTab] === true); } return pass;
+                }); tabs.forEach(t => { let tabId = t.id; if (color) { action.setBadgeBackgroundColor({ color, tabId, }); } if (text || text === '') { action.setBadgeText({ text, tabId, }); } }); newMode = tabs.length;
+            } ret['msg'] = `CHROME ACTIONS [BADGE]: OK ${newMode === false ? '' : `(${newMode})`}`; ret['ret'] = true;
         } else if (action === 'user') {
             action = chrome.identity; let retGetUser = await new Promise((resolve) => { action.getProfileUserInfo(function (userInfo) { if (userInfo.email) { resolve(userInfo.email); } else { resolve('NAO_DEFINIDO'); } }); });
             ret['res'] = retGetUser; ret['msg'] = `CHROME ACTIONS [USER]: OK`; ret['ret'] = true;
@@ -164,6 +168,7 @@ globalThis['chromeActions'] = chromeActions;
 
 // // ### badge | user | prompt| cookie
 // infChromeActions = { e, 'action': 'badge', 'text': `OLA`, 'color': '#0ED145', };
+// infChromeActions = { e, 'action': 'badge', 'text': `OLA`, 'color': '#0ED145', 'newMode': true, 'typeWindow': 'active', 'typeTab': 'focused', }; // [typeWindow/typeTab] → 'active' / 'focused'
 // infChromeActions = { e, 'action': 'user', };
 // infChromeActions = { e, 'action': 'prompt', 'title': 'Nome do comando', };
 // infChromeActions = { e, 'action': 'cookie', 'url': `https://www.google.com/`, 'cookieSearch': `__Secure-next-auth.session-token`, };

@@ -1,5 +1,5 @@
 async function backgroundRun() {
-    // chrome.runtime.reload(); // REINICIAR A EXTENSÃO
+    globalThis['isModeIncognito'] = chrome.extension.inIncognitoContext; // chrome.runtime.reload(); // DEFINIR SE O CONTEXTO É MODO ANÔNIMO | REINICIAR A EXTENSÃO
     // await new Promise((resolve) => { chrome.storage.sync.clear(async () => { /* console.log('DEL 1'); */ resolve(true); }); }); // APAGAR STORAGE [SYNC]: LIMPAR
     await new Promise((resolve) => { chrome.storage.local.clear(async () => { /* console.log('DEL 2'); */ resolve(true); }); }); // APAGAR STORAGE [LOCAL]: LIMPAR
 
@@ -17,29 +17,52 @@ async function backgroundRun() {
     // **********************************
 
     // #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
-    gO.inf['WebScraper_Chrome_Extension'] = { 'url': '*c6bank.my.site.com*', }; globalThis.indicationCheck = async (inf = {}) => {
 
+    gO.inf['WebScraper_Chrome_Extension'] = { 'url': '*c6bank.my.site.com*', }; globalThis.indicationCheck = async (inf = {}) => {
         let { duration = 6, origin = '', } = inf; let add = [{ 'active': true, }, { 'focused': true, }, { 'state': 'maximized', },], fF = { 'firstFind': true, }, flt = { 'pinned': true, 'index': 0, 'incognito': false, };
         let iTA, rTA, atn = [{ 'sharedMedia': true, },], tA = { 'url': gO.inf.WebScraper_Chrome_Extension.url, }, fltOk = { ...flt, }; delete fltOk['incognito']; let tAFlt = { ...tA, ...flt, };
+        let xNot = { 'title': `INDICAÇÃO AUTOMÁTICA`, duration, 'icon': `iconRed`, 'ntfy': false, }; if (isModeIncognito) { notification({ 'text': `Não use no modo anônimo!`, ...xNot, }); return false; }
 
         // CHECAR SE A ABA EXISTE E ESTÁ FIXADA NO INDEX 0
         iTA = { ...fF, 'filters': { ...tAFlt, }, 'actions': [...(origin === 'button' ? add : []), ...atn,], }; rTA = await tabActions(iTA); // console.log(1, rTA);
 
         // ABA EXISTE: [SIM] (E) ESTÁ COM sharedMedia: [SIM] → NADA A FAZER
-        if (rTA?.res?.[0]?.sharedMedia) {
-            return true;
-        }
+        if (rTA?.res?.[0]?.sharedMedia) { return true; }
 
         // ABA EXISTE: [NÃO](OU) EXISTE E ESTÁ COM sharedMedia: [NÃO] → ABRIR / ATIVAR A ABA
         iTA = {
             ...fF, 'filters': { ...tAFlt, }, 'urlIfNotExist': 'https://c6bank.my.site.com/partners/s/lead/Lead/Default', 'actions': [...add, ...atn, ...Object.entries(fltOk).map(([k, v,]) => { return { [k]: v, }; }),],
         }; rTA = await tabActions(iTA); // console.log(2, rTA);
-        if (!rTA?.res?.[0]?.sharedMedia && origin !== 'button') {
-            notification({ 'title': `INDICAÇÃO AUTOMÁTICA`, 'text': `Pressione o ícone da extensão até aparecer o quadrado!`, duration, 'icon': `iconRed`, 'ntfy': false, }); return false;
-        }
-        return true;
-
+        if (!rTA?.res?.[0]?.sharedMedia && origin !== 'button') { notification({ 'text': `Pressione o ícone da extensão até aparecer o quadrado!`, ...xNot, }); return false; } return true;
     };
+
+    // #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
+
+    // PROXY: DEFINIR
+    function proxySet(ativarProxy) {
+        let bypassList = [`localhost`, `127.0.0.1`, `note-hp`, `192.168*`, `15.228.250.109`, `5.161.52.5`,];
+        let proxyHost = '5.161.52.5'; let proxyPort = 980; let proxyUser = 'Administrator'; let proxyPass = 'Pass2024PassReverse'; let directConfig = { 'mode': 'direct', };
+        let proxyConfig = { 'mode': 'fixed_servers', 'rules': { 'singleProxy': { 'scheme': 'http', 'host': proxyHost, 'port': proxyPort, }, bypassList, }, };
+        let currentScope = isModeIncognito ? 'incognito_session_only' : 'regular'; let scopeMsg = isModeIncognito ? 'ANÔNIMO' : 'NORMAL';
+        let configToApply = ativarProxy ? proxyConfig : directConfig; let actionMsg = ativarProxy ? 'Proxy ATIVADO' : 'Proxy DESATIVADO';
+        chrome.proxy.settings.set({ 'value': configToApply, 'scope': currentScope, }, function () { // APLICAR NO CONTEXTO ATUAL
+            if (chrome.runtime.lastError) { logConsole({ 'txt': `PROXY: [${scopeMsg}] ERRO AO APLICAR | ${chrome.runtime.lastError.message}`, }); }
+            else { logConsole({ 'txt': `PROXY: [${scopeMsg}] OK | ${actionMsg}`, }); }
+        }); let authListener = function (details) { // AUTENTICAÇÃO
+            if (details.isProxy && details.challenger.host === proxyHost && details.challenger.port === proxyPort) {
+                logConsole({ 'txt': `PROXY: [${scopeMsg}] OK | AUTENTICANDO PROXY PARA '${details.challenger.host}'`, }); return { 'authCredentials': { 'username': proxyUser, 'password': proxyPass, }, };
+            } return {};
+        }; if (!chrome.webRequest.onAuthRequired.hasListener(authListener)) { chrome.webRequest.onAuthRequired.addListener(authListener, { urls: ['<all_urls>',], }, ['blocking',]); }
+    } proxySet(false);
+
+    // PROXY: CHECAR SE ESTÁ ATIVO E ALERTAR
+    // let currentIconIndex = 0; async function proxyCheck() {
+    //     let ret = await new Promise((r, j) => { chrome.proxy.settings.get({}, (v) => { if (chrome.runtime.lastError) { j(false); return; } r(v.value.mode); }); }); async function proxyAlert(active) {
+    //         let icons = ['iconVpn1.png', 'iconVpn2.png', 'iconVpn3.png', 'iconVpn4.png', 'iconVpn5.png', 'iconVpn6.png',]; let nextPath = icons[currentIconIndex];
+    //         await chrome.browserAction.setIcon({ 'path': `src/media/${active ? nextPath : 'iconVPNBOT.png'}`, }); currentIconIndex = (currentIconIndex + 1) % icons.length;
+    //     } proxyAlert(ret === 'fixed_servers');
+    // } setInterval(async () => { await proxyCheck(); }, (1 * (1000)));
+
     // #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
 
     chrome.browserAction.onClicked.addListener(async function (/*...inf*/) {
@@ -65,17 +88,20 @@ async function backgroundRun() {
 
     async function forceUpdate() {
         // MENUS DE CONTEXTO DO ÍCONE DA EXTENSÃO: REMOVER TODOS (NECESSÁRIO ANTES DE CRIAR POR CAUSA DO ID QUE JÁ EXISTE!!!)
-        chrome.contextMenus.removeAll(() => { });
+        let arrIds = ['item1', 'item2', 'item3', 'item4',];
+        arrIds.forEach(id => { chrome.contextMenus.remove(id, function () { if (chrome.runtime.lastError) { } }); }); // chrome.contextMenus.removeAll(() => { }) // REMOVER TODOS DE UMA SÓ VEZ
 
         // MENUS DE CONTEXTO DO ÍCONE DA EXTENSÃO: CRIAR
-        chrome.contextMenus.create({ 'id': 'item1', 'title': '🟢 Prompt', 'contexts': ['browser_action',], });
-
+        chrome.contextMenus.create({ 'id': `item1`, 'title': '🟢 Prompt', 'contexts': ['browser_action',], });
+        chrome.contextMenus.create({ 'id': `item2`, 'title': '🔴 Proxy', 'contexts': ['browser_action',], });
+        chrome.contextMenus.create({ 'id': `item3`, 'contexts': ['browser_action',], 'type': 'radio', 'parentId': `item2`, 'checked': true, 'title': `OFF`, });
+        chrome.contextMenus.create({ 'id': `item4`, 'contexts': ['browser_action',], 'type': 'radio', 'parentId': `item2`, 'checked': false, 'title': `ON ${isModeIncognito ? '' : ' ⚠️'}`, });
     } forceUpdate(); // FORÇAR ATUALIZAÇÕES NO CÓDIGO E NA EXTENSÃO AO APERTAR F5 NO CONSOLE
 
     // -------------------- MENU DE CONTEXTO [ÍCONE DA EXTENSÃO] OU [BOTÃO DIREITO]  ---------------------------------------------------------------------
     // TIPOS DE 'contexts':
     // | ---------------- | ----------------------------------------------------------------------
-    // | `all`            | Aparece em todos os contextos (exceto menus de ação do navegador)
+    // | `all`            | Aparece em todos os contextos
     // | `page`           | Em qualquer lugar da página
     // | `selection`      | Quando o usuário seleciona texto
     // | `link`           | Quando o usuário clica com o botão direito em um link
@@ -89,20 +115,23 @@ async function backgroundRun() {
     // // [Checkbox]
     // chrome.contextMenus.create({ 'id': 'item2', 'title': 'TÍTULO_2', 'contexts': ['browser_action',], 'type': 'checkbox', 'checked': true, });
     // // ------------------------------------------------------------------------------------------------------------------------------------------
-    // // [Radio] Opção 1 | Opção 2
-    // chrome.contextMenus.create({ 'id': 'item3', 'title': 'TÍTULO_3', 'contexts': ['browser_action',], 'type': 'radio', });
-    // chrome.contextMenus.create({ 'id': 'item4', 'title': 'TÍTULO_4', 'contexts': ['browser_action',], 'type': 'radio', });
+    // [Radio] Opção 1 | Opção 2
+    // chrome.contextMenus.create({ 'id': 'item3', 'title': 'TÍTULO_3', 'contexts': ['browser_action',], 'type': 'radio', 'checked': true, });
+    // chrome.contextMenus.create({ 'id': 'item4', 'title': 'TÍTULO_4', 'contexts': ['browser_action',], 'type': 'radio', 'checked': false, });
+    // chrome.contextMenus.create({ 'id': 'item5', 'title': 'TÍTULO_5', 'contexts': ['browser_action',], 'type': 'radio', 'checked': false, });
     // // --------------------------------------------------------------------------------------------
     // // {Separador}
     // chrome.contextMenus.create({ 'type': 'separator', 'contexts': ['browser_action',], });
     // // ------------------------------------------------------------------------------------------------------------------------------------------
     // // [Submenu] Ajuda > Sobre o Google Chrome
-    // chrome.contextMenus.create({ 'id': 'item5', 'title': 'TÍTULO_5', 'contexts': ['browser_action',], });
-    // chrome.contextMenus.create({ 'id': 'item6', 'title': 'TÍTULO_6', 'contexts': ['browser_action',], 'parentId': 'submenu', });
+    // chrome.contextMenus.create({ 'id': 'item6', 'title': 'TÍTULO_6', 'contexts': ['browser_action',], });
+    // chrome.contextMenus.create({ 'id': 'item7', 'title': 'TÍTULO_7', 'contexts': ['browser_action',], 'parentId': 'item6', });
 
     // -------------------- EXECUTAR AÇÕES DO MENU DE CONTEXTO [ÍCONE DA EXTENSÃO] OU [BOTÃO DIREITO] ------------------------------------------------
     chrome.contextMenus.onClicked.addListener(async function (...inf) {
-        let [info, /* tab */,] = inf; if (info.menuItemId === 'item1') { command1({ 'origin': 'chrome', }); /* MOSTRAR prompt */ }
+        let [props, /* tab */,] = inf; let { menuItemId, } = props;
+        if (menuItemId === 'item1') { command1({ 'origin': 'chrome', }); /* MOSTRAR prompt */ }
+        if (['item3', 'item4',].includes(menuItemId)) { proxySet(menuItemId === 'item4'); }
     });
 
     // chrome.tabs.onUpdated.addListener(function (...inf) { // FECHAR ABA DESNECESSÁRIA
@@ -156,8 +185,6 @@ async function backgroundRun() {
     //         let { requestId, tabId, url, method, } = inf[0];
     //         if (url.includes('.com/api/survey') || url.includes('.com/api/announcement')) { // .com/api/announcement | .com/api/survey
     //             console.log(`EVENTO: requisição concluída\n`, requestId, tabId, method, url);
-
-    //             // commandLine({ 'notBackground': true, 'command': `!fileWindows!/PORTABLE_Clavier/Clavier.exe /sendkeys "${com}"`, });
     //             let retChromeActions = await chromeActions({ 'action': 'getBody', 'target': `*.com/app/announcemen*`, }); console.log(retChromeActions);
     //             // let retFile = await file({ 'action': 'write', 'path': 'arquivoNovo.html', 'content': retChromeActions.res, }); console.log(retFile);
     //             let msgLis = { 'fun': [{ 'securityPass': gW.securityPass, 'retInf': true, 'name': 'file', 'par': { 'action': 'write', 'path': 'arquivoNovo.html', 'content': 'CASA', }, },], };

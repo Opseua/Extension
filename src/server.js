@@ -7,7 +7,7 @@ async function serverRun(inf = {}) {
 
         // IMPEDIR 'serverRun' DE PROSSEGUIR (A CADA x MINUTOS)
         async function notRun() { if (['AWS',].includes(gW.devMaster)) { await claroAuth(); } await new Promise(r => setTimeout(r, (5 * (60 * 1000)))); await notRun(); }
-        if (['NOTE_HP', 'AWS',].includes(gW.devMaster)) { logConsole({ e, ee, 'txt': `❌❌❌ IGNORANDO EXECUÇÃO DO server.js ❌❌❌`, }); await notRun(); }
+        if (['NOTE_HP', 'AWS',].includes(gW.devMaster) || isModeIncognito) { logConsole({ e, ee, 'txt': `❌❌❌ IGNORANDO EXECUÇÃO DO server.js ❌❌❌`, }); await notRun(); }
 
         // RESETAR BADGE
         chromeActions({ e, 'action': 'badge', 'text': '', }); // z_testeElementAction({}); return; // TESTES
@@ -44,7 +44,7 @@ async function serverRun(inf = {}) {
         }
 
         // MANTER ORDEM DA ABA
-        if ((await new Promise((resolve) => { chrome.identity.getProfileUserInfo(function (u) { resolve(u.email); }); })).includes('1@gmail.com')) {
+        if ((await new Promise((resolve) => { chrome.identity.getProfileUserInfo(u => { if (chrome.runtime.lastError) { resolve(null); return; } resolve(u.email || false); }); }))?.includes('1@gmail.com')) {
             logConsole({ e, ee, 'txt': `MONITOR DE ABAS ATIVADO`, }); async function enforceTabOrder() {
                 let TAB_URL = 'https://www.tryrating.com/', B = chrome.tabs, W = chrome.windows, isMoving = false; let moveTab = (tabId, index, retries = 0) => {
                     if (retries >= 10) { return (isMoving = false); }

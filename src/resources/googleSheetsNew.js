@@ -122,7 +122,7 @@ globalThis['googleSheetsNew'] = googleSheetsNew;
 //     ],
 // };
 // infGoogleSheetsNew = {
-//     'action': `addInLastLine`, 'id': `${id}`, 'tab': `${tab}`, 'raw': false, // ← FORÇA OS VALORES COMO ESTÃO (string → string | true → 'true' | '1+1' → '1+1')
+//     'action': `addInLastLine`, 'id': `${id}`, 'tab': `${tab}`, 'raw': false, // ← FORÇA OS VALORES COMO ESTÃO (string → string | true → 'true' | '1+1' → '1+1' | '=SOMA(1; 2)' → '=SOMA(1; 2)')
 //     'values': [
 //         ['', '(→ NUMBER)                       ', 1,],
 //         ['', '(→ NUMBER)                       ', 1234567890,],      // ATÉ 14 DÍGITOS
@@ -146,8 +146,8 @@ globalThis['googleSheetsNew'] = googleSheetsNew;
 // infGoogleSheetsNew = {
 //     e, 'action': 'copy', 'id': `${id}`, 'tab': `${tab}`, 'range': [`A:A`, `C:D`, `F:F`,],
 //     'destinations': [
-//         { 'id': `${id}`, 'tab': `TESTE_2`, 'range': [`B:B`, `H:I`, `K:K`,], 'raw': false, }, // ← FORÇA OS VALORES COMO ESTÃO (string → string | true → 'true' | '1+1' → '1+1')
-//         { 'id': `${id}`, 'tab': `TESTE_3`, 'range': [`C:C`, `E:F`, `H:I`,], 'raw': false, }, // ← FORÇA OS VALORES COMO ESTÃO (string → string | true → 'true' | '1+1' → '1+1')
+//         { 'id': `${id}`, 'tab': `TESTE_2`, 'range': [`B:B`, `H:I`, `K:K`,], 'raw': false, }, // ← FORÇA OS VALORES COMO ESTÃO (string → string | true → 'true' | '1+1' → '1+1' | '=SOMA(1; 2)' → '=SOMA(1; 2)')
+//         { 'id': `${id}`, 'tab': `TESTE_3`, 'range': [`C:C`, `E:F`, `H:I`,], 'raw': false, }, // ← FORÇA OS VALORES COMO ESTÃO (string → string | true → 'true' | '1+1' → '1+1' | '=SOMA(1; 2)' → '=SOMA(1; 2)')
 //     ],
 // };
 // retGoogleSheetsNew = await googleSheetsNew(infGoogleSheetsNew); console.log(JSON.stringify(retGoogleSheetsNew));

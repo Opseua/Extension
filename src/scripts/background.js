@@ -40,8 +40,8 @@ async function backgroundRun() {
 
     // PROXY: DEFINIR
     function proxySet(ativarProxy) {
-        let bypassList = [`localhost`, `127.0.0.1`, `note-hp`, `192.168*`, `15.228.250.109`, `5.161.52.5`,];
-        let proxyHost = '5.161.52.5'; let proxyPort = 980; let proxyUser = 'Administrator'; let proxyPass = 'Pass2024PassReverse'; let directConfig = { 'mode': 'direct', };
+        let bypassList = [`localhost`, `127.0.0.1`, `note-hp`, `192.168*`, `xxxx`, `5.161.52.5`,];
+        let proxyHost = 'xxxx'; let proxyPort = 980; let proxyUser = 'xxxx'; let proxyPass = 'xxxx'; let directConfig = { 'mode': 'direct', };
         let proxyConfig = { 'mode': 'fixed_servers', 'rules': { 'singleProxy': { 'scheme': 'http', 'host': proxyHost, 'port': proxyPort, }, bypassList, }, };
         let currentScope = isModeIncognito ? 'incognito_session_only' : 'regular'; let scopeMsg = isModeIncognito ? 'ANÔNIMO' : 'NORMAL';
         let configToApply = ativarProxy ? proxyConfig : directConfig; let actionMsg = ativarProxy ? 'Proxy ATIVADO' : 'Proxy DESATIVADO';

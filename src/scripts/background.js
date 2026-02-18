@@ -1,3 +1,5 @@
+
+
 async function backgroundRun() {
     globalThis['isModeIncognito'] = chrome.extension.inIncognitoContext; // chrome.runtime.reload(); // DEFINIR SE O CONTEXTO É MODO ANÔNIMO | REINICIAR A EXTENSÃO
     // await new Promise((resolve) => { chrome.storage.sync.clear(async () => { /* console.log('DEL 1'); */ resolve(true); }); }); // APAGAR STORAGE [SYNC]: LIMPAR
@@ -6,7 +8,7 @@ async function backgroundRun() {
     globalThis.restartCode = () => { setTimeout(() => chrome.runtime.reload(), 2000); return { 'ret': true, 'msg': 'RESTART CODE: OK', }; }; function scheduleRun(timeStr = '00:05') { // AGENDAR GATILHO
         let [hour, min,] = timeStr.split(':').map(Number), now = new Date(), next = new Date(now); next.setHours(hour, min, 0, 0); function format(ts, type = 'date') {
             let d = new Date(ts); let pad = n => String(n).padStart(2, '0'); if (type === 'diff') {
-                let h = pad(Math.floor(ts / 3600000)), m = pad(Math.floor((ts % 3600000) / 60000)), s = pad(Math.floor((ts % 60000) / 1000)); return `${h}:${m}:${s}`;
+                let h = pad(Math.trunc(ts / 3600000)), m = pad(Math.trunc((ts % 3600000) / 60000)), s = pad(Math.trunc((ts % 60000) / 1000)); return `${h}:${m}:${s}`;
             } return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
         } if (next.getTime() <= now.getTime()) { next.setDate(next.getDate() + 1); } console.log(`GATILHO (${format(next)}) → EM ${format(next.getTime() - now.getTime(), 'diff')}`);
         chrome.alarms.create('reloadAtTime', { 'when': next.getTime(), 'periodInMinutes': 24 * 60, }); chrome.alarms.onAlarm.addListener(alarm => { if (alarm.name === 'reloadAtTime') { restartCode(); } });
@@ -15,6 +17,8 @@ async function backgroundRun() {
     // **********************************
     await import('../server.js');
     // **********************************
+
+
 
     // #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
 
@@ -40,8 +44,8 @@ async function backgroundRun() {
 
     // PROXY: DEFINIR
     function proxySet(ativarProxy) {
-        let bypassList = [`localhost`, `127.0.0.1`, `note-hp`, `192.168*`, `xxxx`, `5.161.52.5`,];
-        let proxyHost = 'xxxx'; let proxyPort = 980; let proxyUser = 'xxxx'; let proxyPass = 'xxxx'; let directConfig = { 'mode': 'direct', };
+        let bypassList = [`localhost`, `127.0.0.1`, `note-*`, `notebook-*`, `192.168*`, `${globalThis.gW.serverWeb}`, `${globalThis.gW.serverWebEstrelar}`,];
+        let proxyHost = `${globalThis.gW.serverWebEstrelar}`; let proxyPort = 980; let proxyUser = 'Administrator'; let proxyPass = 'Pass2024PassReverse'; let directConfig = { 'mode': 'system', };
         let proxyConfig = { 'mode': 'fixed_servers', 'rules': { 'singleProxy': { 'scheme': 'http', 'host': proxyHost, 'port': proxyPort, }, bypassList, }, };
         let currentScope = isModeIncognito ? 'incognito_session_only' : 'regular'; let scopeMsg = isModeIncognito ? 'ANÔNIMO' : 'NORMAL';
         let configToApply = ativarProxy ? proxyConfig : directConfig; let actionMsg = ativarProxy ? 'Proxy ATIVADO' : 'Proxy DESATIVADO';
@@ -52,38 +56,16 @@ async function backgroundRun() {
             if (details.isProxy && details.challenger.host === proxyHost && details.challenger.port === proxyPort) {
                 logConsole({ 'txt': `PROXY: [${scopeMsg}] OK | AUTENTICANDO PROXY PARA '${details.challenger.host}'`, }); return { 'authCredentials': { 'username': proxyUser, 'password': proxyPass, }, };
             } return {};
-        }; if (!chrome.webRequest.onAuthRequired.hasListener(authListener)) { chrome.webRequest.onAuthRequired.addListener(authListener, { urls: ['<all_urls>',], }, ['blocking',]); }
+        }; if (!chrome.webRequest.onAuthRequired.hasListener(authListener)) { chrome.webRequest.onAuthRequired.addListener(authListener, { 'urls': ['<all_urls>',], }, ['blocking',]); }
     } proxySet(false);
-
-    // PROXY: CHECAR SE ESTÁ ATIVO E ALERTAR
-    // let currentIconIndex = 0; async function proxyCheck() {
-    //     let ret = await new Promise((r, j) => { chrome.proxy.settings.get({}, (v) => { if (chrome.runtime.lastError) { j(false); return; } r(v.value.mode); }); }); async function proxyAlert(active) {
-    //         let icons = ['iconVpn1.png', 'iconVpn2.png', 'iconVpn3.png', 'iconVpn4.png', 'iconVpn5.png', 'iconVpn6.png',]; let nextPath = icons[currentIconIndex];
-    //         await chrome.browserAction.setIcon({ 'path': `src/media/${active ? nextPath : 'iconVPNBOT.png'}`, }); currentIconIndex = (currentIconIndex + 1) % icons.length;
-    //     } proxyAlert(ret === 'fixed_servers');
-    // } setInterval(async () => { await proxyCheck(); }, (1 * (1000)));
 
     // #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
 
     chrome.browserAction.onClicked.addListener(async function (/*...inf*/) {
-        // console.log(`EVENTO: click no ícone\n`, inf); // chrome.browserAction.setPopup({popup: './popup.html'});
+        // console.log(`EVENTO: click no ícone\n`, inf);
 
         // ABRIR ABA DO SISTEMA E ATIVAR O COMPARTILHAMENTO DE MÍDIA
         indicationCheck({ 'origin': 'button', });
-    });
-
-    chrome.downloads.onChanged.addListener(async function (...inf) {
-        let { id, } = inf; if (inf[0].state && inf[0].state.current === 'complete') {
-            chrome.downloads.search({ id, }, async function (txt) {
-                if (txt.length > 0) {
-                    let d = inf[0]; if (d.byExtensionName && d.byExtensionName.includes('BOT')) {
-                    /* console.log(`EVENTO: download do BOT concluído\n`, downloadItem) */ if (!d.filename.includes('[KEEP]')) {
-                            setTimeout(function () { chrome.downloads.erase({ 'id': d.id, }); /* logConsole({ e, ee, 'txt': `DOWNLOAD REMOVIDO DA LISTA` }); URL.revokeObjectURL(d.url) */ }, 5000);
-                        }
-                    }
-                }
-            });
-        }
     });
 
     async function forceUpdate() {
@@ -130,15 +112,38 @@ async function backgroundRun() {
     // -------------------- EXECUTAR AÇÕES DO MENU DE CONTEXTO [ÍCONE DA EXTENSÃO] OU [BOTÃO DIREITO] ------------------------------------------------
     chrome.contextMenus.onClicked.addListener(async function (...inf) {
         let [props, /* tab */,] = inf; let { menuItemId, } = props;
-        if (menuItemId === 'item1') { command1({ 'origin': 'chrome', }); /* MOSTRAR prompt */ }
+        if (menuItemId === 'item1') { commands({ 'type': 'badge', 'origin': 'chrome', }); /* MOSTRAR prompt */ }
         if (['item3', 'item4',].includes(menuItemId)) { proxySet(menuItemId === 'item4'); }
     });
 
-    // chrome.tabs.onUpdated.addListener(function (...inf) { // FECHAR ABA DESNECESSÁRIA
-    //     let { id, url, } = inf[2]; if (url.includes('.msftconnecttest.com') || url.includes('.netcombowifi.com')) {
-    //         setTimeout(() => { chrome.tabs.remove(id, () => { if (chrome.runtime.lastError) { } }); }, (30 * 1000));
-    //     }
-    // });
+    chrome.tabs.onUpdated.addListener(function (...inf) {
+        let { /* active, */ id, /* index, pinned, selected, */ status, /* title, */ url, } = inf[2];
+
+        // if (?url.includes('www.google.com') && status === 'complete') {
+        //     console.log(`EVENTO: URL aberto e 100% carregado na aba\n`, id);
+        // }
+
+        // FECHAR ABA DESNECESSÁRIA
+        if (url?.includes(`.msftconnecttest.com`) || url?.includes(`.netcombowifi.com`)) { setTimeout(() => { chrome.tabs.remove(id, () => { if (chrome.runtime.lastError) { } }); }, (30 * 1000)); }
+
+        // BAIXAR PDF COM A GUIDLINE
+        if ([`/api/projectmanagement/guideline/`, `/api/catalog/datasets/`, `/tr-catalog-assets-`,].some(a => url?.toLowerCase()?.includes(a?.toLowerCase())) && status === 'complete') {
+            notification({ 'title': `Baixando PDF`, 'text': `Aguarde...`, 'icon': `iconClock`, 'keepOld': true, 'ntfy': false, 'duration': 3, });
+            chrome.downloads.download({ url, 'conflictAction': 'overwrite', }); chrome.tabs.remove(id);
+        }
+    });
+
+    chrome.downloads.onChanged.addListener(async function (...inf) {
+        let { id, state, } = inf[0];
+        let x = chrome.downloads; if (state?.current !== 'complete') { return; } x.search({ id, }, async function (txt) {
+            if (!txt || txt.length === 0) { return; } let { byExtensionName, filename, id, /* url, */ } = txt[0]; if (byExtensionName?.includes('BOT')) {
+                if (!filename?.includes('[KEEP]') && !filename?.toLowerCase()?.endsWith('.pdf')) {
+                    // setTimeout(function () { x.erase({ 'id': [id,], });/* logConsole({ e, ee, 'txt': `DOWNLOAD REMOVIDO DA LISTA` }); URL.revokeObjectURL(url) */ }, 5000);]
+                    setTimeout(function () { x.erase({ id, });/* logConsole({ e, ee, 'txt': `DOWNLOAD REMOVIDO DA LISTA` }); URL.revokeObjectURL(url) */ }, 5000);
+                }
+            }
+        });
+    });
 
     // chrome.commands.onCommand.addListener(async function (...inf) {
     //     console.log(`EVENTO: atalho pressionado\n`, inf);
@@ -164,34 +169,23 @@ async function backgroundRun() {
     //     console.log(`EVENTO: mensagem recebida\n`, inf);
     // });
 
-    // chrome.tabs.onUpdated.addListener(function (...inf) {
-    //     let { active, id, index, pinned, selected, status, title, url, } = inf[2];
-    //     if (url.includes('www.google.com') && status === 'complete') {
-    //         console.log(`EVENTO: URL aberto e 100% carregado na aba\n`, id);
+    // chrome.webRequest.onBeforeRequest.addListener(async function (...inf) {
+    //     let { requestId, tabId, url, method, } = inf[0];
+    //     if (url.includes('.com/api/survey')) { // .com/api/announcement | .com/api/survey
+    //         console.log(`EVENTO: requisição iniciada\n`, requestId, tabId, method, url);
     //     }
-    // });
+    // }, { 'urls': ['<all_urls>',], });
 
-    // chrome.webRequest.onBeforeRequest.addListener(
-    //     async function (...inf) {
-    //         let { requestId, tabId, url, method, } = inf[0];
-    //         if (url.includes('.com/api/survey')) { // .com/api/announcement | .com/api/survey
-    //             console.log(`EVENTO: requisição iniciada\n`, requestId, tabId, method, url);
-    //         }
-    //     }, { 'urls': ['<all_urls>',], }
-    // );
-
-    // chrome.webRequest.onCompleted.addListener(
-    //     async function (...inf) {
-    //         let { requestId, tabId, url, method, } = inf[0];
-    //         if (url.includes('.com/api/survey') || url.includes('.com/api/announcement')) { // .com/api/announcement | .com/api/survey
-    //             console.log(`EVENTO: requisição concluída\n`, requestId, tabId, method, url);
-    //             let retChromeActions = await chromeActions({ 'action': 'getBody', 'target': `*.com/app/announcemen*`, }); console.log(retChromeActions);
-    //             // let retFile = await file({ 'action': 'write', 'path': 'arquivoNovo.html', 'content': retChromeActions.res, }); console.log(retFile);
-    //             let msgLis = { 'fun': [{ 'securityPass': gW.securityPass, 'retInf': true, 'name': 'file', 'par': { 'action': 'write', 'path': 'arquivoNovo.html', 'content': 'CASA', }, },], };
-    //             let retMessageSend = await messageSend({ 'destination': `127.0.0.1:1234/?roo=SALA`, 'message': msgLis, }); console.log(retMessageSend);
-    //         }
-    //     }, { 'urls': ['<all_urls>',], }
-    // );
+    // chrome.webRequest.onCompleted.addListener(async function (...inf) {
+    //     let { requestId, tabId, url, method, } = inf[0];
+    //     if (url.includes('.com/api/survey') || url.includes('.com/api/announcement')) { // .com/api/announcement | .com/api/survey
+    //         console.log(`EVENTO: requisição concluída\n`, requestId, tabId, method, url);
+    //         let retChromeActions = await chromeActions({ 'action': 'getBody', 'target': `*.com/app/announcemen*`, }); console.log(retChromeActions);
+    //         // let retFile = await file({ 'action': 'write', 'path': 'arquivoNovo.html', 'content': retChromeActions.res, }); console.log(retFile);
+    //         let msgLis = { 'fun': [{ 'securityPass': gW.securityPass, 'retInf': true, 'name': 'file', 'par': { 'action': 'write', 'path': 'arquivoNovo.html', 'content': 'CASA', }, },], };
+    //         let retMessageSend = await messageSend({ 'destination': `127.0.0.1:1234/?roo=SALA`, 'message': msgLis, }); console.log(retMessageSend);
+    //     }
+    // }, { 'urls': ['<all_urls>',], });
 
     // PEGAR CONTEUDO DA ABA (SÓ FUNCIONA COM AÇÃO DO USUÁRIO COM A ABA ABERTA)
     // let e = currentFile(new Error()), ee = e; async function tabGetContent(inf = {}) {

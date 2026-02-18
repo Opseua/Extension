@@ -33,7 +33,7 @@ async function api(inf = {}) {
 
         // REQ: HEADERS
         let req, resU, resT, resC = '', resH = {}, resB, reqOpt = { method, 'keepalive': true, }, timC = null, timR = null; if (defaultHeaders) {
-            let h = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', };
+            let h = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', };
             h = { ...h, 'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"', 'sec-ch-ua-platform': '"Windows"', ...headers, }; headers = h;
         } reqOpt['headers'] = headers; function cT() { if (timC) { clearTimeout(timC); } if (timR) { clearTimeout(timR); } }
 
@@ -132,4 +132,9 @@ globalThis['api'] = api;
 // https://fakeresponder.com/?sleep=3000&status=401 | https://postman-echo.com/delay/3 | https://postman-echo.com/status/401
 // https://postman-echo.com/get?foo1=bar1&foo2=bar2
 // https://httpbin.org/delay/3 | https://httpbin.org/status/401 | https://httpstat.us/200?sleep=5000
+
+// REDIRECIONAMENTO
+// https://postman-echo.com/redirect-to?url=https://www.google.com
+// https://httpbin.org/redirect-to?url=https://www.google.com
+
 

@@ -115,7 +115,7 @@ globalThis['tabActions'] = tabActions;
 //         // 'index': 1,
 //         // 'sharedMedia': true,
 //         // 'focused': true,
-//         // 'state': 'maximized',
+//         // 'state': 'maximized', // 'minimized'/'normal'/'maximized'/'fullscreen'
 //         // 'incognito': true,
 //         // 'title': '*YouTube*',
 //         // 'url': '*www.google.com*',
@@ -127,7 +127,7 @@ globalThis['tabActions'] = tabActions;
 //         // { 'index': 2, },
 //         // { 'sharedMedia': true, },
 //         // { 'focused': true, },
-//         // { 'state': 'maximized', },
+//         // { 'state': 'maximized', }, // 'minimized'/'normal'/'maximized'/'fullscreen'
 //         // { 'title': '*google*', },
 //         // { 'url': true, },
 //         // { 'awaitComplete': true, },

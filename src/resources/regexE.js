@@ -37,11 +37,13 @@ async function regexE(inf = {}) {
                 'day': String(dt1.getDate()).padStart(2, '0'), 'mon': String(dt1.getMonth() + 1).padStart(2, '0'), 'yea': String(dt1.getFullYear()), 'hou': String(dt1.getHours()).padStart(2, '0'),
                 'min': String(dt1.getMinutes()).padStart(2, '0'), 'sec': String(dt1.getSeconds()).padStart(2, '0'), 'mil': String(dt2.toString().slice(-3)), 'tim': String(dt2.toString().slice(0, -3)),
                 'timMil': String(dt2.toString()), 'monNam': ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ',][dt1.getMonth()],
-            }; let time = dtRes, mon = `MES_${time.mon}_${time.monNam}`, day = `DIA_${time.day}`, hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`, text = errorOk;
+            }; let time = dtRes, yea = `ANO_${time.yea}`, mon = `MES_${time.mon}_${time.monNam}`, day = `DIA_${time.day}`, hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`, text = errorOk;
             try { text = text = typeof text === 'object' ? `${JSON.stringify(text)}\n\n` : `${text}\n\n`; } catch { text = `ERRO_AO_CONVERTER_PARA_JSON\n\n`; }
 
             let path = errorOk.file; if (path.includes('/')) { path = path.substring(path.lastIndexOf('/') + 1); }
-            path = `${letter}:/${root}/${project}/logs/JavaScript/${mon}/${day}/${hou}_ERR_${path.replace(/[<>:"\\|?*]/g, '').replace('.js', '')}.txt`;
+            path = `${root}/${project}/logs/JavaScript/${yea}/${mon}/${day}/${hou}_ERR_${path.replace(/[<>:"\\|?*]/g, '').replace('.js', '')}.txt`;
+            path = `${letter}:/${path.replace(/[<>:"\\|?*]/g, '')}`; // REMOVER CARACTERES NÃO ACEITOS PELO WINDOWS E DEFINIR O MÁXIMO DE 250
+            // FICAVA ASSIM (no WebScraper) → 'D:\ARQUIVOS\PROJETOS\WebScraper\NAO_DEFINIDO:\NAO_DEFINIDO\NAO_DEFINIDO\logs\JavaScript\ANO_2026\MES_01_JAN\DIA_13'
 
             if (typeof errorOk === 'object') {
                 let raw = '', obj = errorOk; for (let k in obj) { if (typeof obj[k] === 'object') { for (let subChave in obj[k]) { raw += obj[k][subChave] + concat; } } else { raw += obj[k] + concat; } }

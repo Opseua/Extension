@@ -12,10 +12,10 @@ let e = currentFile(new Error()), ee = e; let rate = rateLimiter({ 'max': 5, 'se
 async function notification(inf = {}) {
     let ret = { 'ret': false, }; e = inf.e || e; if (!rate.check().ret) { codeStop('notification: MUITAS CHAMADAS!!!'); }
     try {
-        let { retInf = false, title = 'TITULO VAZIO', text = 'TEXTO VAZIO', keepOld = false, ntfy = true, chromeNot = false, duration = 5, icon = 'iconRed', buttons = [], legacy = false, } = inf;
+        let { retInf = false, title = 'TITULO VAZIO', text = 'TEXTO VAZIO', keepOld = false, ntfy = true, chromeNot = false, duration = 5, icon, buttons = [], legacy = false, } = inf;
 
         // [1] → NOTIFICAÇÃO NÃO SOLICITADA | [2] → NOTIFICAÇÃO CHAMADA ret {true} | [msg] NOTIFICAÇÃO CHAMADA ret {false}
-        let { devMy, securityPass, devSever, } = gW; let promises = [], retDAF = {}, rets = []; icon = icon.includes('.png') ? icon : `${icon}.png`;
+        let { devMy, securityPass, devSever, } = gW; let promises = [], retDAF = {}, rets = []; icon = icon?.includes(`icon`) ? icon : 'iconRed'; icon = `${icon.replace(`.png`)}.png`;
 
         // NTFY
         if (ntfy) {

@@ -1,5 +1,5 @@
-// 'write' → 'false' NÃO ESCREVER NOS logs A MENSAGEM (ASYNC NÃO!!! DO CONTRÁRIO FICA LENTO ESPERANDO SALVAR NO ARQUIVO)
-// 'breakLine' → 'false' NÃO ADICIONAR QUEBRA DE LINHA
+// 'write': false → NÃO ESCREVER NOS logs A MENSAGEM (ASYNC NÃO!!! DO CONTRÁRIO FICA LENTO ESPERANDO SALVAR NO ARQUIVO)
+// 'breakLine': false →  NÃO ADICIONAR QUEBRA DE LINHA
 // logConsole({ e, ee, 'txt': `Mensagem do console`, });
 
 let e = currentFile(new Error());

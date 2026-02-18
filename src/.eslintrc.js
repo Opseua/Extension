@@ -3,11 +3,11 @@ let arrGlobal = [
   // FUNÇÃO NATIVAS
   'console', 'setTimeout', 'setInterval', 'clearTimeout', 'AbortController', 'TextEncoder', 'fetch', 'prompt', 'document', 'XPathResult', 'Blob', 'URL', 'DOMParser', 'atob', 'btoa',
   'alert', 'MutationObserver', 'Event', 'clearInterval', 'KeyboardEvent', 'getComputedStyle', 'alertConsole', 'currentFile', 'NodeFilter', 'Node', 'MouseEvent', 'window', 'navigator',
-  'XmlService',
+  'XmlService', 'Utilities', 'TextDecoder', 'CryptoJS', 'socketManager', 'Readable', 'crypto',
 
   // VARIÁVEIS GLOBAIS
   'eng', 'engType', 'engName', 'letter', 'infGlobal', 'gORem', 'gOAdd', 'csf', 'gW', 'legacy', 'platforms', 'ori', 'des',
-  'portStopwatch', 'firstFileCall', 'ignoreThis', 'isModeIncognito',
+  'portStopwatch', 'firstFileCall', 'thisIgnore', 'xxx', 'isModeIncognito',
 
   // VARIÁVEIS DO SISTEMA
   'fileChrome_Extension', 'fileProjetos', 'fileWindows',
@@ -18,7 +18,7 @@ let arrGlobal = [
   // ### BIBLIOTECAS / NATIVO → NODE
   '_WebSocketServer', '_WebSocket', '_fs', '_path', '_cheerio', '_clipboardy', '_http', '_exec', '_google', '_createHash', '_puppeteer', '_net', '_getFolderSize', 'process',
   'Buffer', '_parse', '_stackTrace', '_auth', '_sheets', '_clipboard', '_createRequire', '_axios', '_createWriteStream', '_getVideoDurationInSeconds', '_https', '_m3u8Parser', '_URL',
-  '_createServer', '_createInterface', '_zlib', '_execFile', '_spawn',
+  '_createServer', '_createInterface', '_zlib', '_execFile', '_spawn', '_Readable', '_Server', '_io', '_socketStream', '_ioClient', 'io', 'self',
 
   // GLOBAL OBJECT
   'cs', 'gO', 'gOList',
@@ -31,26 +31,24 @@ let arrGlobal = [
   'UrlFetchApp', 'Browser',
 
   // funções globais → [Chrome_Extension]
-  'api', 'chat', 'chromeActions', 'client', 'clipboard', 'commandLine', 'configStorage', 'dateHour', 'devFun', 'file', 'getPath', 'googleSheets', 'googleTranslate', 'tableHtmlToJson',
+  'api', 'chat', 'chromeActions', 'client', 'clipboard', 'commandLine', 'configStorage', 'dateHour', 'devFun', 'file', 'getPath', 'googleSheets', 'googleTranslate',
   'log', 'logConsole', 'messageSend', 'messageReceived', 'notification', 'objFilter', 'regex', 'regexE', 'tabActions', 'GPT4js', 'listenerAcionar', 'listenerMonitorar',
-  'chromeActionsNew', 'taskInfTryRating', 'zachey01___gpt4free_js', 'background', 'command1', 'audioTranscribe', 'claroAuth', 'command2', 'tryRatingComplete',
-  'clientInputChrome', 'restartCode', 'indicationCheck', 'scheduleRun', 'z_backup', 'z_testeElementAction', 'getPathNew', 'googleSheetsNew', 'newLeadUraReversa',
+  'chromeActionsNew', 'taskInfTryRating', 'zachey01___gpt4free_js', 'background', 'commands', 'tryRatingComplete',
+  'clientInputChrome', 'restartCode', 'indicationCheck', 'scheduleRun', 'z_backup', 'z_testElementAction', 'getPathNew', 'googleSheetsNew', 'base64',
+  'encryptDecrypt', 'taskInfReduceTryRating', 'clientsPrepare', 'clientsConnect', 'enviarMensagem', '_crypto', 'clientConnect',
 
   // funções globais → [Sniffer_Python]
-  'ewoq', 'scilliance', 'tryRating', 'performTask', 'correiosServer', 'targetAlert',
-
-  // funções globais → [URA_Reversa]
-  'leadChangeStatus', 'leadGet', 'leads', 'leadsJsf', 'login',
+  'ewoq', 'tryRating', 'performTask', 'correiosServer', 'targetAlert',
 
   // funções globais → [WebScraper]
   'apiCnpj', 'apiNire', 'awaitLoad', 'browsers', 'buttonElement', 'checkPage', 'cookiesGetSet', 'getTextElement', 'input', 'navigate', 'sendData', 'clientSearch', 'clientGetData',
-  'clientInput', 'maquinaInput', 'screenshot', 'elementAction', 'runElementAction', 'newAccounts', 'moveLeadsMaquinas',
+  'clientInput', 'maquinaInput', 'screenshot', 'elementAction', 'runElementAction', 'newAccounts', 'moveLeadsMaquinas', 'extractContentPageForAi',
 
-  // funções globais → [WebSocket]
-  'html', 'logsDel', 'messageAction', 'performanceDev', 'roomParams',
+  // funções globais → [Connection]
+  'html', 'logsDel', 'messageAction', 'performanceDev', 'roomParams', 'socketServerRun', 'socketClientRun',
 
   // funções globais → [IPTV]
-  'parseM3u', 'chunksOrder', 'redeCanais', 'chunksGet', 'fixChunkStart', 'fixChunkProcess',
+  'parseM3u', 'chunksOrder', 'redeCanais', 'chunksGet', 'chunkFix', 'processChunk',
 ],
 
   // ************** VARIÁVEIS NÃO USADAS **************
@@ -66,7 +64,7 @@ export let jsConfig = [
     // PASTAS OU ARQUIVOS IGNORADOS
     'ignores': [
       // '**/resources/chats/**', '**/*lipboard.js', // TODA A PASTA | PARTE DO NOME DO ARQUIVO
-      '**/resources/chats/**', // '**/teste*.js',
+      '**/scripts/libs/**',
     ],
     // VARIÁVEIS GLOBAIS
     'languageOptions': { 'globals': arrGlobalObj, },
@@ -77,7 +75,7 @@ export let jsConfig = [
 
           'regraA': {
             'meta': { 'messages': { 'x': `VARIÁVEL GLOBAL '{{name}}'`, }, }, create(context) {
-              let globalSet = new Set(arrGlobal.filter(v => !['a',].includes(v)));
+              let globalSet = new Set(arrGlobal.filter(v => !['a', 'thisIgnore', 'xxx',].includes(v)));
               let reportIfGlobal = (node, varName) => { if (globalSet.has(varName)) { context.report({ node, 'messageId': 'x', 'data': { 'name': varName, }, }); } };
               return {
                 AssignmentExpression(node) { if (node.left.type === 'Identifier') { reportIfGlobal(node, node.left.name); } },
@@ -199,6 +197,9 @@ export let jsConfig = [
         'allowTemplateLiterals': true, // IGNORAR ENTRE CRASE → let variavel = { 'chave': `NOME ${pessoa} IDADE: 1`}
         'avoidEscape': true,           // IGNORAR QUANDO INCLUIR ASPAS SIMPLES → let variavel = { 'chave': "O NOME 'ONU' É UMA SIGLA" }
       },],
+
+      // CHAVES E VALORES COM ASPAS SIMPLES
+      'quote-props': ['error', 'always',],
 
       // ##################################################################################################################################################################
     },

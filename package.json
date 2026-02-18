@@ -1,8 +1,14 @@
 {
   "type": "module",
   "dependencies": {
-    "@googleapis/sheets": "^11.1.0",
-    "cheerio": "^1.1.0",
-    "clipboardy": "^4.0.0"
+    "@googleapis/sheets": "^12.0.0",
+    "@koush/wrtc": "^0.5.3",
+    "cheerio": "^1.1.2",
+    "clipboardy": "^5.0.1",
+    "multiplex": "^6.7.0",
+    "simple-peer": "^9.11.1",
+    "websocket-stream": "^5.5.2",
+    "wrtc": "^0.4.7",
+    "ws": "^8.19.0"
   }
 }

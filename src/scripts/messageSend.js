@@ -14,7 +14,7 @@ async function messageSend(inf = {}) {
             messageOk = JSON.stringify(message); buffer = messageOk.includes(`"type":"Buffer"`) && messageOk.includes(`"data":[`) && !messageOk.includes(`"ret"`);
             messageOk = buffer ? Buffer.from(message).toString('base64') : messageOk;
         } else { buffer = false; messageOk = message; } let messageLength = messageOk.length, totalChunks = Math.ceil(messageLength / chunkSize);
-        secondsAwait = !messageOk.includes('"retInf":true') ? 0 : secondsAwait > 0 ? secondsAwait : gW.secRetWebSocket; // → TEMPO PADRÃO SE NÃO FOR INFORMADO
+        secondsAwait = !messageOk.includes('"retInf":true') ? 0 : secondsAwait > 0 ? secondsAwait : gW.secRetConnection; // → TEMPO PADRÃO SE NÃO FOR INFORMADO
         messageId = secondsAwait === 0 ? `${messageId}` : `${messageId}_RET-TRUE`;
 
         let locWeb = destination.includes('127.0.0.1') ? '[LOC]' : '[WEB]'; if (!resWs) { // PEGAR 'ws' (CASO NÃO TENHA SIDO PASSADO)
@@ -69,7 +69,7 @@ let filaBigFalse = [], filaBigTrue = [], sending = false; function enviarMensage
 } async function enviarMensagens(inf = {}) {
     while (true) {
         let { resWs, } = inf; let { big, value, } = processarFilas(); if (!value) { sending = false; break; } let { messageId, partesRestantes, secondsAwait, } = value; let message = JSON.stringify(value);
-        secondsAwait = secondsAwait === 0 ? gW.secRetWebSocket / 2 : secondsAwait / 2;
+        secondsAwait = secondsAwait === 0 ? gW.secRetConnection / 2 : secondsAwait / 2;
 
         // LISTENER DE STATUS: DEFINIR
         let retAwaitTimeout, listenerName = `${messageId}_SERVER_${partesRestantes}`; retAwaitTimeout = awaitTimeout({ secondsAwait, listenerName, });

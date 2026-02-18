@@ -2,7 +2,7 @@ rem RESOLVER ERRO DO ARQUIVO CORROMPIDO E CRIAR OUTRO
 On Error Resume Next
 
 rem COMO USAR
-rem %fileLastRun% "CMD_TOGGLE" "nodeWebSocket_server"
+rem %fileLastRun% "CMD_TOGGLE" "nodeSniffer_Python_server"
 
 rem BIBLIOTECA NECESSARIA
 Set objFSO = CreateObject("Scripting.FileSystemObject")
@@ -23,7 +23,7 @@ Else
     Dim fsoFile, timeManual, timeReboot, rebootQtd, dif, allow, obs, strLine: runType = WScript.Arguments.Item(0): timeNow = DateDiff("s", #1/1/1970 00:00:00 AM#, Now())
 
     rem VERIFICAR SE O ARQUIVO EXISTE
-    pathArquivo = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%fileWindows%") & "\BAT\z_logs\logTime_" & WScript.Arguments.Item(1) & ".txt"
+    pathArquivo = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%fileWindows%") & "\BAT\z_logs\logTime-" & WScript.Arguments.Item(1) & ".txt"
     If Not objFSO.FileExists(pathArquivo) Then
 	    rem ARQUIVO EXISTE: [NAO] → DEFINIR VALORES PADROES
         timeManual = timeNow: timeReboot = timeNow: rebootQtd = 0: allow = "SIM": obs = "NUNCA_EXECUTADO"

@@ -14,7 +14,7 @@ async function clientInputChrome(inf = {}) {
                         'content': `${inf.content.includes(' INI ') ? `\n` : ''}→ ${hou}:${min}:${sec}.${mil} [${engName}] (${origin})\n${inf.content}\n\n`,
                     },
                 },],
-            }; messageSend({ 'destination': `127.0.0.1:8889/?roo=${gW.devMaster}-NODE-WEBSOCKET-SERVER`, message, });
+            }; messageSend({ 'destination': `127.0.0.1:${globalThis.gW.portLoc}/?roo=${gW.devMaster}-NODE-CONNECTION-SERVER`, message, });
         }
 
         // VERIFICAR SE A EXTENSÃO ESTÁ PRONTA

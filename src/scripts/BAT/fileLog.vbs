@@ -19,6 +19,7 @@ Else
     minuto = Right("00" & Minute(dataAtual), 2)
     segundo = Right("00" & Second(dataAtual), 2)
     milissegundo = Right("000" & Round((Timer - Int(Timer)) * 1000), 3)
+	monNam = UCase(Left(MonthName(Month(dataAtual)), 3))
 	
 	rem #####################################################################
 	rem CONVERTER PARA O FORMATO '12 HORAS' (SE NECESSARIO)
@@ -62,7 +63,7 @@ Else
 	rem #####################################################################
 	
 	hora = Right("00" & hora, 2)
-	completaData = "z_MES_" & mes & "_DIA_" & dia
+	completaData = "z_ANO_" & ano & "-MES_" & mes & "_" & monNam & "-DIA_" & dia
     completaHora = hora & ":" & minuto & ":" & segundo & "." & milissegundo & horaAmPm
 
 	pathArquivo = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%fileWindows%") & "\BAT\z_logs\" & completaData & ".txt"

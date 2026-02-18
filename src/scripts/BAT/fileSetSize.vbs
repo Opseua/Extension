@@ -80,7 +80,7 @@ Else
 	comm = "win setsize" & " " & nirPar & " " & """" & WScript.Arguments.Item(0) & """" & " " & windowResize: Shell.ShellExecute nircmd, comm, , "runas", 0: WScript.Sleep 1000
 	
 	rem ESPERAR E ATIVAR JANELA (PARA O CHROME NAO FICAR NA FRENTE)
-	Shell.ShellExecute "cmd", "/c" & " " & nircmd & " " & "win min ititle" & " " & "_WIND" & " " & "&" & " " & nircmd & " " & "win normal ititle" & " " & "_WIND", , "runas", 0
+	Shell.ShellExecute "cmd", "/c" & " " & nircmd & " " & "win min ititle" & " " & "-WIND" & " " & "&" & " " & nircmd & " " & "win normal ititle" & " " & "-WIND", , "runas", 0
 End If
 
 rem ENCERRAR SCRIPT

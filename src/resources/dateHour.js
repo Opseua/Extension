@@ -13,7 +13,7 @@
 // console.log(retDateHour);
 // let { yea, mon, day, hou, min, sec, mil, } = dateHour().res;
 
-// let timestamp = Math.floor(Date.now() / 1000);
+// let timestamp = Math.trunc(Date.now() / 1000);
 
 function dateHour(inf) { // NÃO POR COMO 'async'!!!
     let ret = { 'ret': false, };
@@ -52,8 +52,8 @@ function dateHour(inf) { // NÃO POR COMO 'async'!!!
                 dt1 = new Date(inf > 9999999999 ? inf : inf * 1000);
             } else {
                 // function(90) → [SEC TO HOUR] '00:01:30'
-                let hou = Math.floor(inf / 3600).toString().padStart(2, '0'), min = Math.floor((inf % 3600) / 60).toString().padStart(2, '0');
-                let sec = Math.min(Math.floor(inf % 60), 59).toString().padStart(2, '0');
+                let hou = Math.trunc(inf / 3600).toString().padStart(2, '0'), min = Math.trunc((inf % 3600) / 60).toString().padStart(2, '0');
+                let sec = Math.min(Math.trunc(inf % 60), 59).toString().padStart(2, '0');
 
                 ret['msg'] = `DATE HOUR [SEC TO HOUR]: OK`;
                 ret['ret'] = true;
@@ -86,9 +86,9 @@ function dateHour(inf) { // NÃO POR COMO 'async'!!!
             'min': local.getMinutes().toString().padStart(2, '0'),      // MINUTO (01)
             'sec': local.getSeconds().toString().padStart(2, '0'),      // SEGUNDO (01)
             'mil': local.getMilliseconds().toString().padStart(3, '0'), // MILISSEGUNDOS (123)
-            'tim': Math.floor(localGetTime / 1000).toString(),          // TIMESTAMP (1234567890) [SEM MILISSEGUNDOS]
+            'tim': Math.trunc(localGetTime / 1000).toString(),          // TIMESTAMP (1234567890) [SEM MILISSEGUNDOS]
             'timMil': localGetTime.toString(),                          // TIMESTAMP (1234567890123) [COM MILISSEGUNDOS]
-            'wee': Math.ceil(local.getDate() / 7).toString(),           // NÚMERO DA SEMANA NO MÊS (1)
+            'wee': Math.trunc(local.getDate() / 7).toString(),           // NÚMERO DA SEMANA NO MÊS (1)
             'dayNam': x1[local.getDay()].substring(0, 3),               // DIA (SABADO)
             'dayNamFul': x1[local.getDay()],                            // DIA (SAB) [SEM ACENTO]
             'monNam': x2[localGetMonth].substring(0, 3),                // MÊS (MAR)

@@ -235,7 +235,7 @@ globalThis['chromeActions'] = chromeActions;
 // // → INJECT: ASYNC [NÃO]
 // function funTeste(funInf) { console.log('OK', funInf); return true; }; let funInf = { 'A': 'B' };
 
-// // → INJECT: ASYNC [SIM] (OBRIGATÓRIO O DELAY DE 100 MILESSEUNGOS NO INÍCIO!!!)
+// // → INJECT: ASYNC [SIM] (OBRIGATÓRIO O DELAY DE 100 MILISSEUNGOS NO INÍCIO!!!)
 // async function funTeste(funInf) { await new Promise(r=> { setTimeout(r, 100) }); console.log('OK', funInf); funInf = true; chrome.runtime.sendMessage(funInf); }; let funInf = { 'A': 'B' };
 
 // infChromeActions = { e, 'action': 'injectNew', 'target': `*file:///*`, 'fun': funTeste, 'funInf': funInf, };

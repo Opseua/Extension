@@ -8,7 +8,7 @@ async function googleSheets(inf = {}) {
         let { action, id, tab, range, values, attempts = 2, googleAppScript = false, idOrigin, tabOrigin, linStart, linStartOrigin, linEndOrigin, colsOrigin, isCol, destinations, linesQtd, } = inf; let errAll = '';
 
         /* IMPORTAR BIBLIOTECA [NODE] */ if (libs['@googleapis/sheets']) {
-            libs['@googleapis/sheets'] = { 'sheets': 1, 'auth': 1, }; libs = await importLibs(libs, 'googleSheets'); _sheetsOk = await _sheets({ version: 'v4', auth: (await new _auth.GoogleAuth({ keyFile, scopes, })), });
+            libs['@googleapis/sheets'] = { 'sheets': 1, 'auth': 1, }; libs = await importLibs(libs, 'googleSheets'); _sheetsOk = await _sheets({ 'version': 'v4', 'auth': (await new _auth.GoogleAuth({ keyFile, scopes, })), });
             let r = await configStorage({ e, 'action': 'get', 'key': 'googleAppScriptId', }); if (!r.ret) { return r; } googleAppScriptId = r.res;
         }
 
@@ -103,7 +103,7 @@ async function googleSheets(inf = {}) {
                     res = { // COMPLETAR CÉLULAS VAZIAS (SE NECESSÁRIO)
                         ...res, 'data': {
                             ...res.data, 'valueRanges': res.data.valueRanges.map(colRange => {
-                                let colVals = colRange.values || []; return { ...colRange, 'values': Array.from({ length: linEndOrigin - linStartOrigin + 1, }, (_, i) => colVals[i] || [null,]), };
+                                let colVals = colRange.values || []; return { ...colRange, 'values': Array.from({ 'length': linEndOrigin - linStartOrigin + 1, }, (_, i) => colVals[i] || [null,]), };
                             }),
                         },
                     };

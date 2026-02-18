@@ -6,18 +6,23 @@
 !/src/
 !/src/**
 
-# IGNORAR [NAO] → {DENTRO DA 'src'}
+# IGNORAR [NAO]
 !*eslint*
 !manifest.json
 !package.json
+!requirements.txt
 
-# IGNORAR [SIM] → {DENTRO DA 'src'}
+# IGNORAR [SIM]
 *teste*
 *_temp*
 *.json
 *.pac
-/src/scripts/objects/
+/src/objects/
+/src/scripts/libs/
+/src/connections/
+/src/chatNew.js
 *__pycache__/
+*__init__.py
 
 ##### FILTRO VS Code #####
 # arquivos a serem incluídos

@@ -11,6 +11,7 @@
     "webSocket",
     "proxy",
     "identity",
+    "audioCapture",
     "downloads",
     "fileSystem",
     "identity.email",
@@ -87,9 +88,6 @@
     "48": "./src/media/iconBOT.png",
     "128": "./src/media/iconBOT.png"
   },
-  "browser_action": {
-    "default_popupAAA": "./src/media/popup.html"
-  },
   "background": {
     "scripts": [
       "./src/scripts/background.js"
@@ -104,20 +102,7 @@
       "description": "atalho_2"
     }
   },
-  "content_scripts": [
-    {
-      "js": [
-        "./src/media/floatingButton/floating.js",
-        "./src/media/copyRun.js"
-      ],
-      "css": [
-        "./src/media/floatingButton/styles.css"
-      ],
-      "matches": [
-        "https://www.AAA.com/AAA*"
-      ],
-      "run_at": "document_idle"
-    }
-  ],
-  "incognito": "split"
+  "incognito": "split",
+  "content_security_policy": "object-src 'self'; connect-src http://* https://* ws://*:* wss://*:*; script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net https://esm.sh https://unpkg.com https://cdnjs.cloudflare.com https://cdn.skypack.dev",
+  "x": "x"
 }

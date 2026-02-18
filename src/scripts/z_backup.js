@@ -1,14 +1,21 @@
-// let retBackup = await z_backup({ e, 'mode': `HIDEaaa`, }); console.log(retBackup);
-// CMD → node %fileChrome_Extension%/src/scripts/z_backup.js HIDE
+// let retBackup = await z_backup({ 'mode': 'HIDE', }); console.log(retBackup);
+// CMD → node %fileProjetos%/Chrome_Extension/src/scripts/z_backup.js HIDE [OU SEM PARAMETRO}
 
-let e, ee, pars; if (process?.argv?.[1]?.includes('backup.js')) { globalThis['firstFileCall'] = new Error(); await import('../resources/@export.js'); e = firstFileCall, ee = e; pars = process.argv; await z_backup(); }
+let e, ee; if (!process?.argv) { e = currentFile(new Error()), ee = e; }
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+else if (!globalThis['firstFileCall']) {
+    function clearConsole() { if ((typeof chrome !== 'undefined')) { console.clear(); } else { let p = process.stdout; p.write('\u001b[2J\u001b[0;0H'); p.write('\x1Bc'); } } let msgQtd = 0, nErr = new Error();
+    let runCleCon = console.log; console.log = (...a) => { runCleCon.apply(console, a); msgQtd++; if (msgQtd >= 100) { clearConsole(); msgQtd = 0; console.log('CONSOLE LIMPO!\n'); } }; clearConsole();
+    let argv = process?.argv || []; globalThis['firstFileCall'] = nErr; await import('../resources/@export.js'); e = firstFileCall, ee = e; await z_backup({ 'argv': argv.slice(2), });
+} //
 
 async function z_backup(inf = {}) {
     let ret = { 'ret': false, }; e = inf.e || e;
-    let err, show = true, m = `!fileChrome_Extension!/src/scripts/BAT/fileMsg.vbs`; if ((pars?.[2] || '').toLowerCase() === 'hide' || (inf?.mode || '').toLowerCase() === 'hide') { show = false; }
+    let err, show = true, zzz = '"!fileWindows!/BAT/RUN_PORTABLE/AutoHotkey.exe" "!fileChrome_Extension!/src/scripts/BAT/fileMsg.ahk"';
+    let xxx = `hide`.toLowerCase(); if ((inf?.argv?.some(v => v?.toLowerCase()?.includes(xxx))) || (inf?.mode?.toLowerCase() === xxx)) { show = false; }
     try {
-        let n = `%nircmd%`, s = `sendkeypress lwin`, w = `wait 1500`, retDateHour = dateHour().res; retDateHour = `MES ${retDateHour.mon} - DIA ${retDateHour.day} - HORA ${retDateHour.hou}.${retDateHour.min}`;
-        let backupDestination = `${fileProjetos}/z_OUTROS/BACKUPS_${gW.devMaster}/${retDateHour}`, c, p = backupDestination;
+        let n = `%nircmd%`, s = `sendkeypress lwin`, w = `wait 1500`, { yea, mon, day, hou, min, monNam, } = dateHour().res; let retDateHour = `ANO_${yea}-MES_${mon}_${monNam}-DIA_${day}-HORA_${hou}.${min}`;
+        let backupDestination = `${fileProjetos}/z_OUTROS/BACKUPS/${gW.devMaster}/${retDateHour}`, c, p = backupDestination;
 
         function getBackupPaths(base, includes, excludes) {
             let ps = [], normBase = _path.normalize(base); for (let pat of includes) {
@@ -38,8 +45,8 @@ async function z_backup(inf = {}) {
                 {
                     'backupName': 'PROJETOS', 'backupPath': `${fileProjetos}`,
                     'patternsIncludes': [
-                        '/Chat_Python/*', '/Chat_Python/src/**', '/Chat_Python/logs/chats.json', '/Chat_Python/logs/session.session', '/Chrome_Extension/*', '/Chrome_Extension/src/**',
-                        '/Sniffer_Python/*', '/Sniffer_Python/src/**', '/URA_Reversa/*', '/URA_Reversa/src/**', '/WebScraper/*', '/WebScraper/src/**', '/WebSocket/*', '/WebSocket/src/**',
+                        '/Chrome_Extension/*', '/Chrome_Extension/src/**', '/Sniffer_Python/*', '/Sniffer_Python/src/**', '/WebScraper/*',
+                        '/WebScraper/src/**', '/Connection/*', '/Connection/src/**',
                     ],
                     'patternsExcludes': [
                         '!*desktop.ini', '!/.git', '!/logs', '!/*node_modules', '!*teste*.*', '!*__pycache__*', '!*har_and_cookies*', '!*teste*',
@@ -48,7 +55,7 @@ async function z_backup(inf = {}) {
                 {
                     'backupName': 'WINDOWS', 'backupPath': `${fileWindows}`,
                     'patternsIncludes': [
-                        '/BAT/RECORRENTES/**', '/BAT/RUN_PORTABLE/*', '/BAT/clearTemp.bat', '/BAT/firewallAllowBlockDelete.ps1', '/PORTABLE_z_SetPath/**',
+                        '/BAT/RECORRENTES/**', '/BAT/RUN_PORTABLE/*', '/BAT/clearTemp.bat', '/BAT/firewallAllowBlockDelete.ps1', '/PORTABLE-z_SetPath/**',
                     ],
                     'patternsExcludes': [
                         '!*desktop.ini', '!/*.exe',
@@ -71,14 +78,14 @@ async function z_backup(inf = {}) {
         await commandLine({ e, 'awaitFinish': true, 'command': `${show ? `${n} ${s} & ${n} ${w} & ` : ''}${n} savescreenshot "${p}/screenshot.png"${show ? ` & ${n} ${s}` : ''}`, 'withCmd': true, });
 
         // ZIPAR PASTA
-        await new Promise(r => { setTimeout(r, 500); }); console.log(`ZIPANDO...`); c = `!fileWindows!/PORTABLE_WinRAR/z_OUTROS/PORTABLE_7-Zip/App/7-Zip64/7z.exe`;
+        await new Promise(r => { setTimeout(r, 500); }); console.log(`ZIPANDO...`); c = `!fileWindows!/PORTABLE-WinRAR/z_OUTROS/PORTABLE-7-Zip/App/7-Zip64/7z.exe`;
         c = await commandLine({ e, 'awaitFinish': true, 'command': `"${c}" a -tzip "${p}.zip" "${p}/*"`, });
-        if (!c.ret) { err = `ERRO | AO ZIPAR`; ret['msg'] = `BACKUP: ${err}`; console.log(err); commandLine({ e, 'command': `"${m}" "${err}"`, }); } else if (!(await file({ e, 'action': 'del', 'path': p, })).ret) {
-            err = `ERRO | AO APAGAR PASTA ANTIGA`; ret['msg'] = `BACKUP: ${err}`; console.log(err); if (show) { commandLine({ e, 'command': `"${m}" "${err}"`, }); }
-        } else { p = p.split('/').pop(); p = `CONCLUIDO → '${p}.zip'`; console.log(p); if (show) { commandLine({ e, 'command': `"${m}" "${p}"`, }); } ret['res'] = p; ret['msg'] = `BACKUP: OK`; ret['ret'] = true; }
+        if (!c.ret) { err = `ERRO | AO ZIPAR`; ret['msg'] = `BACKUP: ${err}`; console.log(err); commandLine({ e, 'command': `${zzz} "${err}"`, }); } else if (!(await file({ e, 'action': 'del', 'path': p, })).ret) {
+            err = `ERRO | AO APAGAR PASTA ANTIGA`; ret['msg'] = `BACKUP: ${err}`; console.log(err); if (show) { commandLine({ e, 'command': `${zzz} "${err}"`, }); }
+        } else { p = p.split('/').pop(); p = `CONCLUIDO → '${p}.zip'`; console.log(p); if (show) { commandLine({ e, 'command': `${zzz} "${p}"`, }); } ret['res'] = p; ret['msg'] = `BACKUP: OK`; ret['ret'] = true; }
 
     } catch (catchErr) {
-        err = `ERRO | AO FAZER BACKUPS`; console.log(err, '\n', catchErr); if (show) { commandLine({ e, 'command': `"${m}" "${err}"`, }); }
+        err = `ERRO | AO FAZER BACKUPS`; console.log(err, '\n', catchErr); if (show) { commandLine({ e, 'command': `${zzz} "${err}"`, }); }
         let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
     }
 

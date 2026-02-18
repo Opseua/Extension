@@ -2,7 +2,7 @@
 
 // IMPORTAR OBJETOS COM AS AÇÕES
 let acts = {}, imp = ['AIGeneratedTextEvaluationPortuguese', 'BroadMatchRatings', 'Ratingoftransformedtext', 'TextErrorCategorizationptBR',];
-for (let [index, v,] of imp.entries()) { await import(`./objects/tryRating/act_${v}.js`); acts[v] = globalThis[`act_${v}`]; delete globalThis[`act_${v}`]; }
+for (let [index, v,] of imp.entries()) { await import(`../objects/tryRating/act_${v}.js`); acts[v] = globalThis[`act_${v}`]; delete globalThis[`act_${v}`]; }
 
 let e = currentFile(new Error()), ee = e;
 async function tryRatingSet(inf = {}) {
@@ -18,7 +18,7 @@ async function tryRatingSet(inf = {}) {
         }
 
         let timeNow, timeStart = Number(dateHour().res.tim), elementsObj = acts[hitApp].elementsObj, timeSec = processOk ? 3 : acts[hitApp].timeSec;
-        let target = `*${hitApp}/page_tryrating.mhtml*`; // target = '*tryrating.com*'
+        let target = `*${hitApp}/page_tryrating.mhtml*`; // target = '*.tryrating.*'
 
         // CAPTURAR INPUTS E ENVIAR PARA AI
         if (path || processOk) {

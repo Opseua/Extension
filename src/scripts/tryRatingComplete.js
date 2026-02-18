@@ -4,7 +4,7 @@
 
 // IMPORTAR OBJETOS COM AS OPÇÕES E RESPOSTAS
 let opts = {}, imp = ['Search20',];
-for (let [index, v,] of imp.entries()) { await import(`./objects/tryRating/opt_${v}.js`); opts[v] = globalThis[`opt_${v}`]; delete globalThis[`opt_${v}`]; }
+for (let [index, v,] of imp.entries()) { await import(`../objects/tryRating/opt_${v}.js`); opts[v] = globalThis[`opt_${v}`]; delete globalThis[`opt_${v}`]; }
 
 let e = currentFile(new Error()), ee = e;
 async function tryRatingComplete(inf = {}) {

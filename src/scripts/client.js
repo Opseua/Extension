@@ -48,7 +48,7 @@ async function client(inf = {}) {
         }
 
         // SERVIDORES: CONECTAR E LISTENER DE MENSAGENS RECEBIDAS → [LOC] + [WEB] (AWS) + [WEB] (Hetzner)
-        let servers = [gW.devGet[0], gW.devGet[1],]; if ((`${gW.devGet[0]}`).includes('ESTRELAR')) {
+        let servers = [gW.devGet[0], gW.devGet[1],]; if ((`${gW.devGet[0]}`).includes('ESTRELAR') || (`${gW.devGet[0]}`).includes('OPSEUA')) {
             servers.push(`${gW.serverWebEstrelar}:${gW.devGet[0].split(':')[1]}`);
         } for (let [index, value,] of servers.entries()) {
             if (!value.includes('127.0.0.1') && (gW.project === 'Sniffer_Python' || (!value.includes('USUARIO_0') && value.includes('USUARIO_')))) {

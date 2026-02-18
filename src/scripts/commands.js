@@ -1,8 +1,8 @@
 let e = currentFile(new Error()), ee = e;
-async function command1(inf = {}) {
+async function commands(inf = {}) {
   let ret = { 'ret': false, }; e = inf.e || e;
   try {
-    let { origin, } = inf;
+    let { type, origin, } = inf;
 
     let retChromeActions;
     if (origin === 'chrome') {
@@ -56,6 +56,6 @@ async function command1(inf = {}) {
 }
 
 // CHROME | NODE
-globalThis['command1'] = command1;
+globalThis['commands'] = commands;
 
 

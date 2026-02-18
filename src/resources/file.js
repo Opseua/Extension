@@ -128,7 +128,7 @@ async function file(inf = {}) {
                     let filterEdit = (n, r, s) => r.filter(f => { if (!f.edit) { return false; } let t = new Date(f.edit).getTime() / 1000; return s >= 0 ? t < n - s : t > n + s; });
 
 
-                    if (editSec !== 0) { all = filterEdit(Math.floor(Date.now() / 1000) - 3 * 3600, all, (editSec)); } resNew['ret'] = true; resNew['msg'] = `FILE [LIST NEW]: OK`; resNew['res'] = all;
+                    if (editSec !== 0) { all = filterEdit(Math.trunc(Date.now() / 1000) - 3 * 3600, all, (editSec)); } resNew['ret'] = true; resNew['msg'] = `FILE [LIST NEW]: OK`; resNew['res'] = all;
                 } catch { delete resNew.res; resNew['msg'] = `FILE [LIST NEW]: ERRO | AO LISTAR '${path}'`; } return resNew;
             }
 

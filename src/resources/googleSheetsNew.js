@@ -2,12 +2,12 @@
 
 let e = currentFile(new Error()), ee = e; let expirationTimestamp = 0, token;
 async function googleSheetsNew(inf = {}) {
-    let ret = { 'ret': false, }; e = inf.e || e;
+    let ret = { 'ret': false, }, nameFun = `GOOGLE SHEET NEW`; e = inf.e || e;
     try {
-        let { action, id, tab, range, values, lineStart, lineEnd, qtdLines, destinations = [{},], raw, ignoreFormatting = false, attempts = 2, } = inf; let nameF = `GOOGLE SHEET NEW`, isArr = Array.isArray(range);
+        let { action, id, tab, range, values, lineStart, lineEnd, qtdLines, destinations = [{},], raw, ignoreFormatting = false, attempts = 2, } = inf; let isArr = Array.isArray(range);
         let errAll = '', retSheetNew, baseUrl = `https://sheets.googleapis.com/v4/spreadsheets/${id}`, actions = ['get', 'update', 'addInLastLine', 'addInNewLine', 'deleteLines', 'copy',];
 
-        function checkToken(timestamp) { return (timestamp > (Math.floor(Date.now() / 1000) - 120)); /* MENOS 2 MINUTOS */ } function formattingData(values) {
+        function checkToken(timestamp) { return (timestamp > (Math.trunc(Date.now() / 1000) - 120)); /* MENOS 2 MINUTOS */ } function formattingData(values) {
             return values.map(row => row.map(v => { // {APÓSTROFE NA FRETE NÃO DA PROBLEMA}
                 if (typeof v === 'number' && Number.isInteger(v) && String(v).length > 14) { return `'${v}`; }
                 if (typeof v === 'string') { if (!isNaN(Number(v))) { return `'${v}`; } let vTemp = v.toLowerCase(); if (vTemp === 'true' || vTemp === 'false') { return `'${v}`; } } return v;
@@ -35,24 +35,23 @@ async function googleSheetsNew(inf = {}) {
         if (!errPars && ['update', 'addInLastLine', 'addInNewLine',].includes(action) && !values) { errPars = `'values'`; } if (!errPars && action === 'deleteLines') {
             let x = !(lineStart > 0) ? `'lineStart'` : !(lineEnd > 0 || qtdLines > 0) ? `'lineEnd' OU 'qtdLines'` : !(Number(tab) > 0) ? `'tab' (number)` : false; if (x) { errPars = `${x}`; }
         } if (!errPars && action === 'copy') { for (let [index, d,] of destinations.entries()) { let f = ['id', 'tab', 'range',].find(k => !d[k]); if (f) { errPars = `'${f}' DE TODOS 'destinations'`; break; } } }
-        if (errPars) { ret['msg'] = `${nameF}${act ? ` [${action}]` : ''}: ERRO | INFORMAR O ${errPars}`; return ret; }
-
-        // CORRIGIR RANGE(s) ('A:B10' → 'A1:B10')
-        range = (isArr ? range : [range,]).map(v => { let r = rangeParse(v); return `${r.colSta}${r.linSta}${r.colEnd ? `:${r.colEnd}${r.linEnd || ''}` : ''}`; }); if (!isArr) { range = range[0]; }
+        if (errPars) { ret['msg'] = `${nameFun}${act ? ` [${action}]` : ''}: ERRO | INFORMAR O ${errPars}`; return ret; }
 
         // TOKEN
         if (!checkToken(expirationTimestamp)) {
-            await logConsole({ e, ee, 'txt': `TOKEN: GLOBAL INVÁLIDO`, }); let retConStor = await configStorage({ e, 'action': 'get', 'key': '*', });
-            if (!retConStor.ret) { ret['msg'] = `${nameF} [${action}]: ERRO | → ${retConStor.msg}`; return ret; } let { tokenGoogle, googleAppScriptId, } = retConStor.res; token = tokenGoogle.accountService.token;
-            expirationTimestamp = tokenGoogle.accountService.expirationTimestamp; let isValid = checkToken(expirationTimestamp); if (isValid) { logConsole({ e, ee, 'txt': `TOKEN: ARMAZENADO VÁLIDO!`, }); } else {
+            let cAdd = { e, 'action': 'get', 'key': `*`, }, retConStor = await configStorage({ ...cAdd, }); if (!retConStor.ret) { ret['msg'] = `${nameFun} [${action}]: ERRO | → ${retConStor.msg}`; return ret; }
+            let { googleAppScriptId, } = retConStor.res; cAdd = { ...cAdd, 'path': `./logs/tokenGoogle.json`, 'functionLocal': true, }; let { tokenGoogle = {}, } = (await configStorage({ ...cAdd, })).res || {};
+            token = tokenGoogle?.accountService?.token; expirationTimestamp = tokenGoogle?.accountService?.expirationTimestamp; if (!checkToken(expirationTimestamp)) {
                 await logConsole({ e, ee, 'txt': `TOKEN: GERANDO...`, }); let infApi = {
                     e, 'method': 'POST', 'object': true, 'url': `https://script.google.com/macros/s/${googleAppScriptId}/exec`, 'body': { 'action': 'run', 'name': 'getTokenGoogle', 'par': {}, 'maxResponse': 5, },
-                }; let retApi = await api(infApi); let tokenGoogleTemp = retApi?.res?.body?.res; if (!tokenGoogleTemp) { ret['msg'] = `${nameF} [${action}]: ERRO | AO GERAR NOVO TOKEN`; return ret; }
+                }; let retApi = await api(infApi); let tokenGoogleTemp = retApi?.res?.body?.res; if (!tokenGoogleTemp) { ret['msg'] = `${nameFun} [${action}]: ERRO | AO GERAR NOVO TOKEN`; return ret; }
                 token = tokenGoogleTemp.accountService.token; expirationTimestamp = tokenGoogleTemp.accountService.expirationTimestamp;
-                if (!(await configStorage({ e, 'action': 'set', 'key': 'tokenGoogle', 'value': tokenGoogleTemp, })).ret) { ret['msg'] = `${nameF} [${action}]: ERRO | AO SALVAR NOVO TOKEN`; return ret; }
-                await logConsole({ e, ee, 'txt': `TOKEN: GERADO!`, });
+                if (!(await configStorage({ ...cAdd, 'action': 'set', 'key': 'tokenGoogle', 'value': tokenGoogleTemp, })).ret) { ret['msg'] = `${nameFun} [${action}]: ERRO | AO SALVAR NOVO TOKEN`; return ret; }
             } let { mon, day, hou, min, sec, } = dateHour(expirationTimestamp).res; await logConsole({ e, ee, 'txt': `TOKEN: VÁLIDO ATÉ: ${day}/${mon} ${hou}:${min}:${sec}`, });
         }
+
+        // CORRIGIR RANGE 'A:B10' → 'A1:B10'
+        range = (isArr ? range : [range,]).map(v => { let r = rangeParse(v); return `${r.colSta}${r.linSta}${r.colEnd ? `:${r.colEnd}${r.linEnd || ''}` : ''}`; }); if (!isArr) { range = range[0]; }
 
         if (action === 'get') {
             range = isArr ? range.map(r => `${tab}!${r}`) : [`${tab}!${range}`,];
@@ -67,26 +66,25 @@ async function googleSheetsNew(inf = {}) {
             if (!ignoreFormatting) { values = formattingData(values); } let body = { values, }; retSheetNew = await _sheetNew({ 'method': 'POST', url, body, });
             if (retSheetNew.ret) { ret['ret'] = true; retSheetNew = retSheetNew.res; ret['res'] = { 'updatedRange': retSheetNew.updates.updatedRange, }; }
         } else if (action === 'deleteLines') {
-            let startIndex = lineStart - 1; if (qtdLines > 0) { lineEnd = startIndex + qtdLines; } if (lineEnd <= startIndex) { ret['msg'] = `${nameF} [${action}]: ERRO | LINHAS INVÁLIDAS`; return ret; }
+            let startIndex = lineStart - 1; if (qtdLines > 0) { lineEnd = startIndex + qtdLines; } if (lineEnd <= startIndex) { ret['msg'] = `${nameFun} [${action}]: ERRO | LINHAS INVÁLIDAS`; return ret; }
             let endIndex = lineEnd; let req = [{ 'deleteDimension': { 'range': { 'sheetId': Number(tab), 'dimension': 'ROWS', startIndex, endIndex, }, }, },];
             let url = `${baseUrl}:batchUpdate`; let body = { 'requests': req, }; retSheetNew = await _sheetNew({ 'method': 'POST', url, body, });
             if (retSheetNew.ret) { ret['ret'] = true; ret['res'] = { lineStart, 'lineEnd': endIndex, 'qtdLines': endIndex - startIndex, }; }
         } else if (action === 'copy') {
             let res = { 'updatedRanges': [], }, retOk1 = await googleSheetsNew({ e, 'action': 'get', id, tab, range, });
-            if (!retOk1.ret) { ret['msg'] = `${nameF} [${action}]: ERRO | → ${retOk1.msg}`; return ret; } for (let [index, value,] of destinations.entries()) {
+            if (!retOk1.ret) { ret['msg'] = `${nameFun} [${action}]: ERRO | → ${retOk1.msg}`; return ret; } for (let [index, value,] of destinations.entries()) {
                 let { id, tab, range, } = value; let retOk2 = await googleSheetsNew({ e, 'action': 'update', id, tab, range, 'values': retOk1.res, });
-                if (!retOk2.ret) { ret['msg'] = `${nameF} [${action}]: ERRO | → ${retOk2.msg}`; ret['res'] = res; return ret; } res.updatedRanges.push(retOk2.res.updatedRanges);
+                if (!retOk2.ret) { ret['msg'] = `${nameFun} [${action}]: ERRO | → ${retOk2.msg}`; ret['res'] = res; return ret; } res.updatedRanges.push(retOk2.res.updatedRanges);
             } ret['ret'] = true; ret['res'] = res;
         }
 
         // TENTAR NOVAMENTE EM CASO DE ERRO | MANTER 'legacy' true PORQUE NO WebScraper O WEBSOCKET NÃO ESTÁ CONECTADO
-        if (ret.ret) { ret['msg'] = `${nameF} [${action}]: OK`; } else {
+        if (ret.ret) { ret['msg'] = `${nameFun} [${action}]: OK`; } else {
             let err = identifyErr(); let errOk = err.includes(`<ERR>`); err = err?.replace(`<ERR>`, ''); if (err.includes(`TOKEN INVÁLIDO`)) { attempts = 1; } attempts--;
             let idTabRange = `'${id}' '${tab}'${!range ? '' : ` '${range}'`}${!lineStart ? '' : ` '${lineStart}' → '${lineStart + qtdLines}'`}`, text = `TENTATIVAS RESTANTES [${attempts}] → ${err}\n\n${idTabRange}`;
-            if (attempts < 1) { await notification({ e, 'legacy': true, 'title': `# SHEETS (${gW.devMaster}) [NODE]`, text, }); } logConsole({ e, ee, txt: `${text}${errOk ? '' : `\n\n*** ERRO SHEETS\n${errAll}`}`, });
-            if (attempts > 0) { await new Promise(r => setTimeout(r, (3 * (1000)))); ret = (await googleSheetsNew({ ...inf, attempts, })); } else { ret['msg'] = `${nameF} [${action}]: ERRO | ${err} ${idTabRange}`; }
+            if (attempts < 1) { await notification({ e, 'legacy': true, 'title': `# SHEETS (${gW.devMaster}) [NODE]`, text, }); } logConsole({ e, ee, 'txt': `${text}${errOk ? '' : `\n\n*** ERRO SHEETS\n${errAll}`}`, });
+            if (attempts > 0) { await new Promise(r => setTimeout(r, (3 * (1000)))); ret = (await googleSheetsNew({ ...inf, attempts, })); } else { ret['msg'] = `${nameFun} [${action}]: ERRO | ${err} ${idTabRange}`; }
         }
-
     } catch (catchErr) {
         let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
     }
@@ -165,6 +163,56 @@ globalThis['googleSheetsNew'] = googleSheetsNew;
 // async function getTabId(inf = {}) {
 //     let ret = { 'ret': false, }; let { id, tab, } = inf; let res = await _sheets.spreadsheets.get({ 'spreadsheetId': id, }); let aba = res.data.sheets.find(s => s.properties.title === tab);
 //     if (!aba) { ret['msg'] = `GET ID TAB: ERRO | ABA '${tab}' NÃO ENCONTRADA`; } else { ret['ret'] = true; ret['msg'] = `GET ID TAB: OK`; ret['res'] = { 'tab': aba.properties.sheetId, }; } return ret;
-// } 
+// }
+
+// function colRef(v) {
+//     let num = (typeof v === 'string' && v.trim() !== '' && !isNaN(v)) ? Number(v) : v; return typeof num === 'number' ? num > 0 ? colRef(Math.trunc((num - 1) / 26))
+//         + String.fromCharCode(65 + (num - 1) % 26) : '' : [...num.toUpperCase(),].reduce((a, c) => a * 26 + c.charCodeAt(0) - 64, 0);
+// }
 
 
+// async function sheetQuery() {
+//     let SPREADSHEET_ID = '1siyBH7X_OOVYykt3h1pZNl4enYPgs8jgZoUF1kAJF3s'; let tab, formula;
+//     let ACCESS_TOKEN = 'ya29.c.c0AYnqXlj9nze4v2WBKIiNoQMTiVCRqjidnrlMvHWfR0-ECwUYrRT-Aoz-lk8x3fmOX7kvAO50YwHqhggiLHqXxED6GU9wJIJIt6uP8IB1a1YIZO87Qmyb_ijf_rmAmdyZu-20wu0L3AxAsxZ1u-AMEBlRQCuZYM4MDPY7WHwSilKxRZ_5MIw0gzualZS5WELZIdnT0wFg1GflCAhZQo0pSEQ_lzxiGbSrAtkDkVi7COc12_7aDqXMZV-5wT1Ha2adX5FS9foU1frnyZWTb8gIYpEiRF2rPEc51fUG8iqOohoblltxLslYDDbVWtKi3mBqxmxWtPTYehIm2c4_LlryaHsP4emHT4-T7GjBpziH2LmaRFZJoTKBWJa_L385C2a3ndS3s5U0r69zh6r2zBs-u8uej3wMBpxQpwmVtu9bcRnVYFf9howfZgxXVIbXuQhj5wz4i3V7x6n-rxYiFSoI2gczpqRXF8Zvl-jo0aQj4iYRkj0Ilfxav9JtMwYzJm2o27l5Q_m0yojXOuVX53OeVWYIx_kyqWbslyrkfgWBnYgfUfvZV5J5mhvy50zOYXJUixBpIJublj5wfmgh0z_ZbsRZB2neR09l9o8VQb1gJ2RYwajZtF9YxO6ulIx_QnaYk3Fx4Z-lVw-2Mz4quphqUs0WenoO-s4YX5tcukrzj_OlZ2Mfdq8qwx9Qb8pa147B34bwQfl34eq1XVZ-fkty26FqkMlvJ3r2Ipo88lvFcd6nnIIvfX-880XmS4r_nM79M2clpFVwmwilz6Yf-8xecyZFrr8lr8FU2OXQ6lX-F2zbOIyyIZfXYaeVw1skik-_cIgyhbcUx_19laJ-_1hZppaowf8jRRuo4pQqs9Qg_wMuu5gnXBoerY5Iu9lf-vu12sFsB8zy6Rv-k-6-Z2gr--79BbZq9JqcO2cUlYe_gwfej5MVrx1F4n3nUYROjOZvsURF8o2IubSSB8ka9lOB5WOtzXSUa6o5kY-gw09w6Jke8uBIZ1exkd9';
+
+//     // ('ZZZ' NÃO DA PROBLEMA)
+//     tab = `INDICAÇÕES`; formula = `=ARRAYFORMULA(SUBSTITUTE(SUBSTITUTE({FILTER({ROW('${tab}'!A:A)\\'${tab}'!A:ZZZ}; '${tab}'!A:A<>"")};CHAR(13);"");CHAR(10);""))`;
+
+//     let infApi, retApi; let baseUrl = `https://sheets.googleapis.com/v4/spreadsheets`, headers = { 'Authorization': `Bearer ${ACCESS_TOKEN}`, 'Content-Type': 'application/json', };
+//     let x = { e, 'method': 'GET', 'code': true, 'object': true, 'url': `${baseUrl}/${SPREADSHEET_ID}`, headers, }; let gvizUrl, query, termo, range, col; tab = `_TEMP_`;
+
+//     function colRef(v) {
+//         let num = (typeof v === 'string' && v.trim() !== '' && !isNaN(v)) ? Number(v) : v; return typeof num === 'number' ? num > 0 ? colRef(Math.trunc((num - 1) / 26))
+//             + String.fromCharCode(65 + (num - 1) % 26) : '' : [...num.toUpperCase(),].reduce((a, c) => a * 26 + c.charCodeAt(0) - 64, 0);
+//     } let isNumber = (v) => { return !Number.isNaN(Number(v)); };
+
+//     // ABA TEMPORÁRIA: VERIFICAR SE EXISTE DO CONTRÁRIO CRIAR
+//     infApi = { ...x, 'method': 'GET', 'url': `${x.url}?fields=sheets.properties`, }; retApi = await api(infApi); if (!retApi.ret) { return retApi; } retApi = retApi.res.body;
+//     let sheetId = retApi?.sheets?.find(s => s.properties.title === tab)?.properties.sheetId; if (!sheetId) {
+//         infApi = { ...x, 'method': 'POST', 'url': `${x.url}:batchUpdate`, 'body': { 'requests': [{ 'addSheet': { 'properties': { 'title': tab, 'hidden': false, }, }, },], }, };
+//         retApi = await api(infApi); if (!retApi.ret) { return retApi; } retApi = retApi.res.body; sheetId = retApi.replies[0].addSheet.properties.sheetId; console.log(`ABA → CRIADA: '${tab}'`);
+//     }
+
+//     // ABA TEMPORÁRIA: INSERIR FÓRMULA
+//     infApi = { ...x, 'method': 'PUT', 'url': `${x.url}/values/_TEMP_!A1?valueInputOption=USER_ENTERED`, 'body': { 'values': [[formula,],], }, };
+//     retApi = await api(infApi); if (!retApi.ret) { return retApi; } retApi = retApi.res.body; console.log(`ABA → FÓRMULA INSERIDA: ID '${sheetId}' '${tab}'`);
+
+//     // ABA TEMPORÁRIA: QUERY
+//     col = `4`; range = `A:K`; termo = `ZAF NEGOCIOS DIGITAIS LTDA`; col = `${isNumber(col) ? colRef(col) : col}`; query = `SELECT * WHERE LOWER(${col.toUpperCase()}) CONTAINS '${termo.toLowerCase()}'`;
+//     gvizUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?sheet=_TEMP_${range ? `&range=${range}` : ``}&tq=${encodeURIComponent(query)}`;
+//     infApi = { ...x, 'method': 'GET', 'code': false, 'url': `${gvizUrl}`, }; retApi = await api(infApi); if (!retApi.ret) { return retApi; } retApi = retApi.res.body;
+//     retApi = JSON.parse(retApi.substring(retApi.indexOf('{'), retApi.lastIndexOf('}') + 1)); let res = { 'lin': [], 'data': [], }; retApi.table.rows.forEach((row) => {
+//         let cols = row.c.slice(1).map((col) => { if (col && col.v !== null && col.v !== undefined) { return String(col.v).replace(/\s+/g, ' ').trim(); } return ''; });
+//         res.lin.push(row.c[0]?.v !== undefined ? row.c[0].v : 0); res.data.push(cols);
+//     });
+
+//     // ABA TEMPORÁRIA: EXCLUIR
+//     async function deleteSheet() {
+//         infApi = { ...x, 'method': 'POST', 'url': `${x.url}:batchUpdate`, 'body': { 'requests': [{ 'deleteSheet': { sheetId, }, },], }, }; retApi = await api(infApi); if (!retApi.ret) { return retApi; }
+//         console.log(`ABA → EXCLUÍDA: ID '${sheetId}' '${tab}'`);
+//     } deleteSheet(); // NÃO POR 'await' PARA ACELERAR A RESPOSTA!
+
+//     console.log(res);
+
+// }
+// sheetQuery();

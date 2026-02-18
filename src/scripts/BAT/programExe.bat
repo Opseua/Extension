@@ -4,7 +4,7 @@ set "local=%~dp0" & set "local=!local:~0,-1!" & set "letra=!local:~0,1!" & set "
 rem AVISO PARA USAR O ATALHO COM PARAMENTROS
 if "!arg1!" == "" ( !3_BACKGROUND! /NOCONSOLE "cmd.exe /c !fileMsg! "[!local!\!arquivo!]\\n\\nNENHUM PARAMETRO PASSADO"" & exit )
 rem NET SESSION > nul 2>&1 & if !errorlevel! neq 0 ( set "adm=NAO" ) else ( set "adm=SIM" )
-rem echo WScript.Echo(new Date().getTime()); > !temp!\time.js & for /f "delims=" %%a in ('cscript //nologo !temp!\time.js') do set "timeNow=%%a" & set "timeNow=!timeNow:~0,-3!" & set "dia=!DATE:~0,2!" & set "mes=!DATE:~3,2!"
+rem echo WScript.Echo(new Date().getTime()); > !temp!\time.js & for /f "delims=" %%a in ('cscript //nologo !temp!\time.js') do set "tNow=%%a" & set "tNow=!tNow:~0,-3!" & set "dia=!DATE:~0,2!" & set "mes=!DATE:~3,2!"
 rem ********************************************************************************************************************************************************
 
 rem REGISTRAR GATILHO
@@ -29,15 +29,16 @@ set "result=!devMaster:%search%=%replace%!" & set "result=!result:,=%replace%!" 
 rem ********************************************************************************************************************************************************
 
 rem ************* AWS
-set "nodeAws=WebSocket_server" & set "pythonAws="
+set "nodeAws=Connection_server" & set "pythonAws="
 rem ************* ESTRELAR
-set "nodeEstrelar=WebSocket_server;URA_Reversa_serverJsf;WebScraper_serverC6;WebScraper_serverC6_New2" & set "pythonEstrelar="
+set "nodeEstrelar=Connection_server;WebScraper_serverC6;WebScraper_serverC6_New2" & set "pythonEstrelar="
 rem ************* ESTRELAR_MARCOS
-set "nodeEstrelarMarcos=WebSocket_server" & set "pythonEstrelarMarcos="
+set "nodeEstrelarMarcos=Connection_server" & set "pythonEstrelarMarcos="
 rem ************* ESTRELAR_THAYNA
-set "nodeEstrelarThayna=WebSocket_server" & set "pythonEstrelarThayna="
+set "nodeEstrelarThayna=Connection_server" & set "pythonEstrelarThayna="
 rem ************* OPSEUA
-set "nodeOpseua=!nodeAws!;!nodeEstrelar!;IPTV_server;Sniffer_Python_server" & set "pythonOpseua=!pythonAws!;Sniffer_Python_server"
+rem set "nodeOpseua=!nodeAws!;!nodeEstrelar!;IPTV_server;Sniffer_Python_server" & set "pythonOpseua=!pythonAws!;Sniffer_Python_server"
+set "nodeOpseua=!nodeAws!;!nodeEstrelar!;IPTV_server;Sniffer_Python_server" & set "pythonOpseua=!pythonAws!;!pythonEstrelar!"
 
 if "!devMaster!" == "AWS" ( set "nodeOk=!nodeAws!" & set "pythonOk=!pythonAws!" )
 if "!devMaster!" == "ESTRELAR" ( set "nodeOk=!nodeEstrelar!" & set "pythonOk=!pythonEstrelar!" )
@@ -72,7 +73,7 @@ rem ---------------------------------------------------------- CRIAR -----------
 
 rem → ************* ALTERAR LOCAL DO TERMINAL PARA A PASTA DO NODE (CRIAR | FIREWALL [PERMITIR])
 if not "!nodeOk!" == "!nodeOk:_=!" ( 
-	cd /d !fileWindows!\PORTABLE_Node & powershell "!fileWindows!\BAT\firewallAllowBlockDelete.ps1" "ALLOW" "!cd!\node.exe"
+	cd /d !fileWindows!\PORTABLE-Node & powershell "!fileWindows!\BAT\firewallAllowBlockDelete.ps1" "ALLOW" "!cd!\node.exe"
 	for %%a in ("%nodeOk:;=";"%") do (
 		set "varOk=%%~a" & set "varOk=!varOk:"=!"
 		if not exist "!cd!\node!varOk!.exe" (
@@ -85,7 +86,7 @@ if not !fileQtdNode! GTR 0 ( set "fileQtdNode=0" & set "fileNode=; " )
 
 rem → ************* ALTERAR LOCAL DO TERMINAL PARA A PASTA DO PYTHON (CRIAR | FIREWALL [PERMITIR])
 if not "!pythonOk!" == "!pythonOk:_=!" ( 
-	cd /d !fileWindows!\PORTABLE_Python & powershell "!fileWindows!\BAT\firewallAllowBlockDelete.ps1" "ALLOW" "!cd!\python.exe"
+	cd /d !fileWindows!\PORTABLE-Python & powershell "!fileWindows!\BAT\firewallAllowBlockDelete.ps1" "ALLOW" "!cd!\python.exe"
 	for %%a in ("%pythonOk:;=";"%") do (
 		set "varOk=%%~a" & set "varOk=!varOk:"=!"
 		if not exist "!cd!\python!varOk!.exe" (
@@ -104,7 +105,7 @@ rem ---------------------------------------------------------- APAGAR ----------
 :COPIA_APAGAR
 
 rem → ************* ALTERAR LOCAL DO TERMINAL PARA A PASTA DO NODE (APAGAR (EXCETO O PROPRIO) | FIREWALL [APAGAR REGRA])
-cd /d !fileWindows!\PORTABLE_Node & powershell "!fileWindows!\BAT\firewallAllowBlockDelete.ps1" "DELETE" "!cd!\node.exe"
+cd /d !fileWindows!\PORTABLE-Node & powershell "!fileWindows!\BAT\firewallAllowBlockDelete.ps1" "DELETE" "!cd!\node.exe"
 for %%F in (*) do (
 	set "filename=%%~nxF"
 	if not "!filename!" == "!filename:node=!" (
@@ -118,7 +119,7 @@ for %%F in (*) do (
 if not !fileQtdNode! GTR 0 ( set "fileQtdNode=0" & set "fileNode=; " )
 
 rem → ************* ALTERAR LOCAL DO TERMINAL PARA A PASTA DO PYTHON (APAGAR (EXCETO O PROPRIO) | FIREWALL [APAGAR REGRA])
-cd /d !fileWindows!\PORTABLE_Python & powershell "!fileWindows!\BAT\firewallAllowBlockDelete.ps1" "DELETE" "!cd!\python.exe"
+cd /d !fileWindows!\PORTABLE-Python & powershell "!fileWindows!\BAT\firewallAllowBlockDelete.ps1" "DELETE" "!cd!\python.exe"
 for %%F in (*) do (
 	set "filename=%%~nxF"
 	if not "!filename!" == "!filename:python=!" (

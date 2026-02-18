@@ -4,7 +4,7 @@
 
 let e = currentFile(new Error()), ee = e; let libs = { 'net': {}, };
 async function model(inf = {}) {
-    let ret = { 'ret': false, }; e = inf.e || e;
+    let ret = { 'ret': false, }, nameFun = `MODEL`; e = inf.e || e;
     try {
         /* IMPORTAR BIBLIOTECA [NODE] */  if (libs['net']) { libs['net']['net'] = 1; libs = await importLibs(libs, 'serverRun [Sniffer_Python]'); }
 
@@ -13,7 +13,7 @@ async function model(inf = {}) {
         let retRegex = regex({ e, 'pattern': `UM(.*?)TRES`, text, 'nada': folder, }); console.log(retRegex);
 
         ret['res'] = `resposta aqui`;
-        ret['msg'] = `MODEL: OK`;
+        ret['msg'] = `${nameFun}: OK`;
         ret['ret'] = true;
 
     } catch (catchErr) {

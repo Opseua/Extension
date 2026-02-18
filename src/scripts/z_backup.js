@@ -1,5 +1,5 @@
-// let retBackup = await z_backup({ e, 'mode': `HIDEaaa`, }); console.log(retBackup);
-// CMD → node %fileChrome_Extension%/src/scripts/z_backup.js HIDE
+// let retBackup = await z_backup({ 'mode': 'HIDE', }); console.log(retBackup);
+// CMD → node %fileProjetos%/Extension/src/scripts/z_backup.js HIDE [OU SEM PARAMETRO}
 
 let e, ee; if (!process?.argv) { e = currentFile(new Error()), ee = e; }
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -11,7 +11,8 @@ else if (!globalThis['firstFileCall']) {
 
 async function z_backup(inf = {}) {
     let ret = { 'ret': false, }; e = inf.e || e;
-    let err, show = true, m = `!fileChrome_Extension!/src/scripts/BAT/fileMsg.vbs`; if ((pars?.[2] || '').toLowerCase() === 'hide' || (inf?.mode || '').toLowerCase() === 'hide') { show = false; }
+    let err, show = true, zzz = '"!fileWindows!/BAT/RUN_PORTABLE/AutoHotkey.exe" "!fileExtension!/src/scripts/BAT/fileMsg.ahk"';
+    let xxx = `hide`.toLowerCase(); if ((inf?.argv?.some(v => v?.toLowerCase()?.includes(xxx))) || (inf?.mode?.toLowerCase() === xxx)) { show = false; }
     try {
         let n = `%nircmd%`, s = `sendkeypress lwin`, w = `wait 1500`, { yea, mon, day, hou, min, monNam, } = dateHour().res; let retDateHour = `ANO_${yea}-MES_${mon}_${monNam}-DIA_${day}-HORA_${hou}.${min}`;
         let backupDestination = `${fileProjetos}/z_OUTROS/BACKUPS/${gW.devMaster}/${retDateHour}`, c, p = backupDestination;
@@ -44,8 +45,8 @@ async function z_backup(inf = {}) {
                 {
                     'backupName': 'PROJETOS', 'backupPath': `${fileProjetos}`,
                     'patternsIncludes': [
-                        '/Chat_Python/*', '/Chat_Python/src/**', '/Chat_Python/logs/chats.json', '/Chat_Python/logs/session.session', '/Chrome_Extension/*', '/Chrome_Extension/src/**',
-                        '/Sniffer_Python/*', '/Sniffer_Python/src/**', '/URA_Reversa/*', '/URA_Reversa/src/**', '/WebScraper/*', '/WebScraper/src/**', '/WebSocket/*', '/WebSocket/src/**',
+                        '/Extension/*', '/Extension/src/**', '/Sniffer/*', '/Sniffer/src/**', '/WebScraper/*',
+                        '/WebScraper/src/**', '/Connection/*', '/Connection/src/**',
                     ],
                     'patternsExcludes': [
                         '!*desktop.ini', '!/.venv', '!/logs', '!/*node_modules', '!*teste*.*', '!*__pycache__*', '!*har_and_cookies*', '!*teste*',

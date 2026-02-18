@@ -37,7 +37,7 @@ set "nodeEstrelarMarcos=Connection_server" & set "pythonEstrelarMarcos="
 rem ************* ESTRELAR_THAYNA
 set "nodeEstrelarThayna=Connection_server" & set "pythonEstrelarThayna="
 rem ************* OPSEUA
-set "nodeOpseua=!nodeAws!;!nodeEstrelar!;IPTV_server;Sniffer_Python_server" & set "pythonOpseua=!pythonAws!;Sniffer_Python_server"
+set "nodeOpseua=!nodeAws!;!nodeEstrelar!;IPTV_server;Sniffer_server" & set "pythonOpseua=!pythonAws!;!pythonEstrelar!;Sniffer_server"
 
 if "!devMaster!" == "AWS" ( set "nodeOk=!nodeAws!" & set "pythonOk=!pythonAws!" )
 if "!devMaster!" == "ESTRELAR" ( set "nodeOk=!nodeEstrelar!" & set "pythonOk=!pythonEstrelar!" )

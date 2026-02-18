@@ -29,9 +29,6 @@
 // let table = { 'cols': ['COL_A', 'COL_B', 'COL_C',], 'lins': [['A1', 'B1', 'C1',], ['A2', 'B2', 'C2',], ['A3', 'B3', 'C3',],], };
 // table = table.lins.map(l => Object.fromEntries(table.cols.map((c, i) => [c, l[i],]))); console.table(table);
 
-// let table = { 'cols': ['COL_A', 'COL_B', 'COL_C',], 'lins': [['A1', 'B1', 'C1',], ['A2', 'B2', 'C2',], ['A3', 'B3', 'C3',],], };
-// table = table.lins.map(l => Object.fromEntries(table.cols.map((c, i) => [c, l[i],]))); console.table(table);
-
 // ############### CLEAR CONSOLE | CRASH CODE ###############
 function clearConsole() { if (eng) { console.clear(); } else { process.stdout.write('\u001b[2J\u001b[0;0H'); process.stdout.write('\x1Bc'); } } let msgQtd = 0; let runCleCon = console.log; clearConsole();
 globalThis['thisIgnore'] = ''; console.log = function () { runCleCon.apply(console, arguments); msgQtd++; if (msgQtd >= 100) { clearConsole(); msgQtd = 0; console.log('CONSOLE LIMPO!\n'); } };

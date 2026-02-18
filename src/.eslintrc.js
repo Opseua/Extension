@@ -30,18 +30,15 @@ let arrGlobal = [
   // ### BIBLIOTECAS / NATIVO → GOOGLE 
   'UrlFetchApp', 'Browser',
 
-  // funções globais → [Chrome_Extension]
-  'api', 'chat', 'chromeActions', 'client', 'clipboard', 'commandLine', 'configStorage', 'dateHour', 'devFun', 'file', 'getPath', 'googleSheets', 'googleTranslate', 'tableHtmlToJson',
+  // funções globais → [Extension]
+  'api', 'chat', 'chromeActions', 'client', 'clipboard', 'commandLine', 'configStorage', 'dateHour', 'devFun', 'file', 'getPath', 'googleSheets', 'googleTranslate',
   'log', 'logConsole', 'messageSend', 'messageReceived', 'notification', 'objFilter', 'regex', 'regexE', 'tabActions', 'GPT4js', 'listenerAcionar', 'listenerMonitorar',
   'chromeActionsNew', 'taskInfTryRating', 'zachey01___gpt4free_js', 'background', 'commands', 'tryRatingComplete',
   'clientInputChrome', 'restartCode', 'indicationCheck', 'scheduleRun', 'z_backup', 'z_testElementAction', 'getPathNew', 'googleSheetsNew', 'base64',
   'encryptDecrypt', 'taskInfReduceTryRating', 'clientsPrepare', 'clientsConnect', 'enviarMensagem', '_crypto', 'clientConnect',
 
-  // funções globais → [Sniffer_Python]
-  'ewoq', 'scilliance', 'tryRating', 'performTask', 'correiosServer', 'targetAlert',
-
-  // funções globais → [URA_Reversa]
-  'leadChangeStatus', 'leadGet', 'leads', 'leadsJsf', 'login',
+  // funções globais → [Sniffer]
+  'ewoq', 'tryRating', 'performTask', 'correiosServer', 'targetAlert',
 
   // funções globais → [WebScraper]
   'apiCnpj', 'apiNire', 'awaitLoad', 'browsers', 'buttonElement', 'checkPage', 'cookiesGetSet', 'getTextElement', 'input', 'navigate', 'sendData', 'clientSearch', 'clientGetData',

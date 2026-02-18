@@ -56,7 +56,8 @@ globalThis['z_testElementAction'] = (inf) => { return importFun({ 'engOk': (eng 
 await import('./dateHour.js'); await import('./regex.js'); await import('./chromeActions.js'); await import('./chromeActionsNew.js');
 
 // → SCRIPTS
-await import('../scripts/elementAction.js'); // → 'Chrome_Extension' / 'WebScraper'
+await import('../scripts/elementAction.js'); // → 'Extension' / 'WebScraper'
+// await import('../scripts/extractContentPageForAi.js'); // → 'Extension'
 //  **************
 
 

@@ -15,7 +15,7 @@ async function notification(inf = {}) {
         let { retInf = false, title = 'TITULO VAZIO', text = 'TEXTO VAZIO', keepOld = false, ntfy = true, chromeNot = false, duration = 5, icon, buttons = [], legacy = false, } = inf;
 
         // [1] → NOTIFICAÇÃO NÃO SOLICITADA | [2] → NOTIFICAÇÃO CHAMADA ret {true} | [msg] NOTIFICAÇÃO CHAMADA ret {false}
-        let { devMy, securityPass, devSever, } = gW; let promises = [], retDAF = {}, rets = []; icon = icon.includes('.png') ? icon : `${icon}.png`;
+        let { devMy, securityPass, devSever, } = gW; let promises = [], retDAF = {}, rets = []; icon = icon?.includes(`icon`) ? icon : 'iconRed'; icon = `${icon.replace('.png', '')}.png`;
 
         // NTFY
         if (ntfy) {

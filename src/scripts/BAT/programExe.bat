@@ -18,7 +18,7 @@ if "!arg1!" == "APAGAR" ( goto COPIA_APAGAR ) else ( if "!arg1!" == "CRIAR" ( go
 
 rem ****************************** IDENTIFICAR O DEVMASTER PELO CONFIG (NAO SUBIR!!!) ***************************************************************
 set "devMaster=#" & set "search=    master: " & set "replace="
-for /f "usebackq delims=" %%a in ("!fileChrome_Extension!\src\master.json") do ( 
+for /f "usebackq delims=" %%a in ("!fileExtension!\src\master.json") do ( 
 	set "conteudo=%%a"
 	set "conteudo=!conteudo:"=!"
 	if not "!conteudo!" == "!conteudo:master:=!" ( set "devMaster=!conteudo!" & goto DEVMASTER_ENCONTRADO )
@@ -37,8 +37,7 @@ set "nodeEstrelarMarcos=Connection_server" & set "pythonEstrelarMarcos="
 rem ************* ESTRELAR_THAYNA
 set "nodeEstrelarThayna=Connection_server" & set "pythonEstrelarThayna="
 rem ************* OPSEUA
-rem set "nodeOpseua=!nodeAws!;!nodeEstrelar!;IPTV_server;Sniffer_Python_server" & set "pythonOpseua=!pythonAws!;Sniffer_Python_server"
-set "nodeOpseua=!nodeAws!;!nodeEstrelar!;IPTV_server;Sniffer_Python_server" & set "pythonOpseua=!pythonAws!;!pythonEstrelar!"
+set "nodeOpseua=!nodeAws!;!nodeEstrelar!;IPTV_server;Sniffer_Python_server" & set "pythonOpseua=!pythonAws!;Sniffer_Python_server"
 
 if "!devMaster!" == "AWS" ( set "nodeOk=!nodeAws!" & set "pythonOk=!pythonAws!" )
 if "!devMaster!" == "ESTRELAR" ( set "nodeOk=!nodeEstrelar!" & set "pythonOk=!pythonEstrelar!" )

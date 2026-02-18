@@ -20,7 +20,6 @@
 /src/objects/
 /src/scripts/libs/
 /src/connections/
-/src/chatNew.js
 *__pycache__/
 *__init__.py
 
@@ -29,3 +28,5 @@
 # →   *.js,*.py,*.vbs,*.bat,*.ps1,*.txt,*.json
 # arquivos a serem excluídos
 # →   **PORTABLE_FreeFileSync/Logs
+
+

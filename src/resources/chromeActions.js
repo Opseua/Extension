@@ -162,7 +162,7 @@ async function chromeActions(inf = {}) {
 // CHROME | NODE
 globalThis['chromeActions'] = chromeActions;
 
-// → HTML para teste em: 'D:\ARQUIVOS\PROJETOS\Chrome_Extension\src\resources\z_HTML.html'
+// → HTML para teste em: 'D:\ARQUIVOS\PROJETOS\Extension\src\resources\z_HTML.html'
 
 // let infChromeActions, retChromeActions;
 

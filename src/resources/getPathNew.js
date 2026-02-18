@@ -3,7 +3,7 @@ let qtd0 = 0; async function importFun(infOk = {}) {
 
     let { engOk, path, inf, } = infOk; qtd0++; let name = path.match(/([^\\/]+)(?=\.[^\\.]+$)/)[0], x = `${fileProjetos}`; if (qtd0 > 50) { console.log(`IMPORT FUN: ERRO | EM LOOP!!! '${path}'`); codeStop(); }
     let y = gW.devFunctions; if (engOk) {
-        await import((eng ? `${gW.devRoot}://${y}` : `file://${x}/${y === 'NAO_DEFINIDO' ? 'Chrome_Extension' : y}`) + `/${path.replace('./', '')}`); return globalThis[name](inf);
+        await import((eng ? `${gW.devRoot}://${y}` : `file://${x}/${y === 'NAO_DEFINIDO' ? 'Extension' : y}`) + `/${path.replace('./', '')}`); return globalThis[name](inf);
     } else {
         let retDevAndFun = await devFun({ 'e': import.meta.url, 'enc': true, 'data': { name, 'par': inf, }, }); return retDevAndFun;
     }
@@ -36,7 +36,7 @@ async function getPathNew(inf = {}) {
 
         } else {
             // →→→ NODE
-            devFunctions = 'Chrome_Extension'; let z = firstFileCallNew?.stack?.split('\n')?.[1]?.replaceAll('\\', '/')?.match(/(?:file:\/\/)?([a-zA-Z]:[^:]+\.js)/)?.[1] || false;
+            devFunctions = 'Extension'; let z = firstFileCallNew?.stack?.split('\n')?.[1]?.replaceAll('\\', '/')?.match(/(?:file:\/\/)?([a-zA-Z]:[^:]+\.js)/)?.[1] || false;
             if (z) { devLetter = z[0].toUpperCase(); devProject = z.split('/')[3]; devRoot = z.split(`/${devProject}/`)[0].split(':/')[1]; devServer = { 'devServer': z.split(`/${devProject}/`)[1], }; }
 
             globalThis['__fs'] = (await import('fs')); let fileConfigMaster = `${devLetter}:/${devRoot}/${devFunctions}`;

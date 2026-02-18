@@ -51,9 +51,6 @@ if "!actionRun!" == "ON" (
 	rem ALTERAR LOCAL DO TERMINAL
 	cd /d !fileProjetos!\!project!
 
-	rem → "(project) WebScraper" "(serverFile) serverC6_New2" "(restartOnStop) RESTART/RESTART_STOP" "(mode) KEEP" "(ret) TRUE" "(engine) python"
-	set "comm0=!fileChrome_Extension!\src\scripts\BAT\process.bat "!arg1!" "!arg2!" "!arg3!" "!restartOnStop!" "!arg5!" "!arg6!"" & set "comm1=cmd.exe /c title !programExe!-CMD"
-	set "comm2=!programExePath! !serverFile!" & set "comm3=!3_BACKGROUND! /NOCONSOLE /DELAY=" & set "comm4=!programExe!-WIND"
 	if not "!action!" == "!action:HIDE=!" (
 		rem [HIDE] OBRIGATORIO O '/RUNAS'!!!
 		!3_BACKGROUND! /NOCONSOLE /RUNAS "!comm1!& !comm2! & !comm3!2 "cmd.exe /c echo a" & call !comm0!"

@@ -1,4 +1,4 @@
-// 'functionLocal': true/CHAVE_AUSENTE → SALVA EM 'PROJETOS/Chrome_Extension/src/config.json'
+// 'functionLocal': true/CHAVE_AUSENTE → SALVA EM 'PROJETOS/Extension/src/config.json'
 // 'functionLocal': false              → SALVA EM 'PROJETOS/__ProjetoAtual__/src/config.json'
 // 'path': `!fileProjetos!/TESTE/arquivoConfig.json`
 // 'path': `./logs/arquivoConfig.json`

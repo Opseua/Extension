@@ -7,12 +7,12 @@
 //     // 'command': `notepad & explorer`,
 //     // ****************** (SEM ESPAÇO)
 //     // 'command': `D:/ARQUIVOS/BAT.bat AAA`,
-//     // 'command': `%fileWindows%/PORTABLE-Notepad++/notepad++.exe D:/AAA.txt`,
-//     // 'command': `!fileProjetos!/Sniffer_Python/src/z_OUTROS/server.vbs OFF`,
+//     // 'command': `%fileWindows%/PORTABLE_Notepad++/notepad++.exe D:/AAA.txt`,
+//     // 'command': `!fileProjetos!/WebSocket/src/z_OUTROS_server/OFF.vbs FORCE_STOP`,
 //     // ****************** (COM ESPAÇO)
 //     // 'command': `"D:/ARQUIVOS/BAT.bat" "AAA BBB"`,
-//     // 'command': `"%fileWindows%/PORTABLE-Notepad++/notepad++.exe" "D:/AAA BBB.txt"`,
-//     // 'command': `"!fileProjetos!/Sniffer_Python/src/z_OUTROS/server.vbs" "OFF" "FORCE_STOP"`,
+//     // 'command': `"%fileWindows%/PORTABLE_Notepad++/notepad++.exe" "D:/AAA BBB.txt"`,
+//     // 'command': `"!fileProjetos!/WebSocket/src/z_OUTROS_server/OFF.vbs" "FORCE_STOP" "AAA BBB"`,
 //     // ****************** (MESMO PROCESSO)
 //     'newMode': true, 'command': `!fileWindows!/PORTABLE-VLC/DISCO_C/Program Files/VideoLAN/VLC/vlc.exe`, // COM OS SEM ASPAS DUPLAS (A FUNÇÃO JÁ CORRIGE)
 //     'args': [`D:\\ARQUIVOS\\PROJETOS\\IPTV\\logs\\Video\\#_NAO_COPIAR\\_10_22-10.06.54.511.ts`, `--meta-title=XX:XX:XX [PROV] (AAA) Telecine Action`, `--extraintf=http`, `--http-port=8081`,],

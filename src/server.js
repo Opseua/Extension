@@ -28,16 +28,17 @@ async function serverRun(inf = {}) {
         chrome.commands.onCommand.addListener(async function (...inf) {
             try {
                 // logConsole({ e, ee, 'txt': `ON START: ATALHO PRESSIONADO` })
-                if (inf?.[0] === 'atalho_1') { commands({ 'type': inf[0], 'origin': 'chrome', }); } else if (inf?.[0] === 'atalho_2') {
-                    await notification({ 'duration': 2, 'icon': 'iconBOT', 'title': `AGUARDE...`, 'text': `Alternando sniffer`, 'ntfy': false, });
-                    await commandLine({ e, 'command': `${fileProjetos}/Sniffer_Python/src/z_OUTROS/server.vbs TOGGLE_HIDE`, });
-                } else { logConsole({ e, ee, 'txt': `ACAO DO ATALHO NAO DEFINIDA`, }); }
-                // chrome.tabs.executeScript({
-                //     code: `(function () {
-                //             function pw(j, pw, ph, u) {let w = (pw / 100) * j.top.screen.width, h = (ph / 100) * j.top.screen.height; 
-                //             let y = j.top.outerHeight / 2 + j.top.screenY - (h / 2), x = j.top.outerWidth / 2 + j.top.screenX - (w / 2);
-                //             return j.open(u, '', 'width=' + w + ',height=' + h + ',top=' + y + ',left=' + x); }; pw(globalThis, 30, 35, 'http://127.0.0.1:1234/?act=page&roo=&mes=0'); })();`
-                // });
+                if (inf[0] === 'atalho_1') {
+                    command1({ 'origin': 'chrome', });
+
+                    // chrome.tabs.executeScript({
+                    //     code: `(function () {
+                    //             function pw(j, pw, ph, u) {let w = (pw / 100) * j.top.screen.width, h = (ph / 100) * j.top.screen.height; 
+                    //             let y = j.top.outerHeight / 2 + j.top.screenY - (h / 2), x = j.top.outerWidth / 2 + j.top.screenX - (w / 2);
+                    //             return j.open(u, '', 'width=' + w + ',height=' + h + ',top=' + y + ',left=' + x); }; pw(globalThis, 30, 35, 'http://127.0.0.1:1234/?act=page&roo=&mes=0'); })();`
+                    // });
+
+                } else if (inf[0] === 'atalho_2') { command2(); } else { logConsole({ e, ee, 'txt': `ACAO DO ATALHO NAO DEFINIDA`, }); }
             } catch (catchErr) { await regexE({ inf, 'e': catchErr, }); }
         });
 
@@ -47,7 +48,7 @@ async function serverRun(inf = {}) {
         await new Promise(r => { setTimeout(r, 50); }); client({ e, }); await new Promise(r => { setTimeout(r, 1000); });
 
         // REINICIAR EXTENSÃO | CHECAR SE O BOT DA INDICAÇÃO ESTÁ PREPARADO
-        // setTimeout(() => { tabActions({ 'filters': { 'url': gO.inf.WebScraper_Chrome_Extension.url, }, 'actions': [{ 'sharedMedia': false, },], }); console.log('sharedMedia: OFF'); }, 20000); // TESTES
+        // setTimeout(() => { tabActions({ 'filters': { 'url': gO.inf.WebScraper_Extension.url, }, 'actions': [{ 'sharedMedia': false, },], }); console.log('sharedMedia: OFF'); }, 20000); // TESTES
         if ((`${gW.devGet[0]}`).includes('ESTRELAR_')) {
             logConsole({ e, ee, 'txt': `ACIONADO → REINICIAR EXTENSÃO | CHECAR SE O BOT DA INDICAÇÃO ESTÁ PREPARADO`, });
             scheduleRun('00:00'); let delay = (1 * 60 * 1000); // delay = 15000; // ← TESTES

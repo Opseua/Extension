@@ -16,7 +16,7 @@ rem REGISTRAR GATILHO
 !fileLog! "[COMMANDS] = [### INICIOU ###] (P: !arg1!)"
 
 rem ****************************** IDENTIFICAR O DEVMASTER PELO CONFIG (NAO SUBIR!!!) ***************************************************************
-set "devMaster=#" & set "search=    master: " & set "replace=" & set contador=0
+set "devMaster=#" & set "search=    master: " & set "replace="
 for /f "usebackq delims=" %%a in ("!fileChrome_Extension!\src\master.json") do ( 
 	set "conteudo=%%a"
 	set "conteudo=!conteudo:"=!"
@@ -27,21 +27,13 @@ for /f "usebackq delims=" %%a in ("!fileChrome_Extension!\src\master.json") do (
 set "result=!devMaster:%search%=%replace%!" & set "result=!result:,=%replace%!" & set "devMaster=!result!"
 rem ********************************************************************************************************************************************************
 
-rem PROJETOS
-set "action=!arg1!" & set "atalho=ON_VIEW" & set "projectsNonDefault=;" & set "toOff=;" & set "toOn=;"
-
-set "projectsAws=node-Connection-server"
-set "projectsEstrelar=node-Connection-server;node-WebScraper-serverC6;node-WebScraper-serverC6_New2"
-set "projectsEstrelarMarcos=node-Connection-server"
-set "projectsEstrelarThayna=node-Connection-server"
-set "projectsOpseua=node-Connection-server" & set "projectsNonDefaultOpseua=node-Sniffer_Python-server"
-
-if "!devMaster!" == "AWS" ( set "projects=!projectsAws!" & goto PROJETOS_ENCONTRADO )
-if "!devMaster!" == "ESTRELAR" ( set "projects=!projectsEstrelar!" & goto PROJETOS_ENCONTRADO )
-if "!devMaster!" == "ESTRELAR_MARCOS" ( set "projects=!projectsEstrelarMarcos!" & set "atalho=ON_HIDE" & goto PROJETOS_ENCONTRADO )
-if "!devMaster!" == "ESTRELAR_THAYNA" ( set "projects=!projectsEstrelarThayna!" & set "atalho=ON_HIDE" & goto PROJETOS_ENCONTRADO )
-if "!devMaster!" == "OPSEUA" ( set "projectsNonDefault=!projectsNonDefaultOpseua!" & set "projects=!projectsOpseua!;!projectsNonDefault!" & set "atalho=ON_HIDE" & goto PROJETOS_ENCONTRADO )
-
+rem PROJETOS E MODO
+set "atalhoModo=ERRO" & set "action=!arg1!" & set "projectsOff= " & set "projectsOn= " & set "projects=#"
+if "!devMaster!" == "AWS" ( set "atalhoModo=ON_VIEW" & set "projects=#WebSocket_server# #Chat_Python#" & goto PROJETOS_ENCONTRADO )
+if "!devMaster!" == "OPSEUA" ( set "atalhoModo=ON_HIDE" & set "projects=#WebSocket_server# #Sniffer_Python_server#" & goto PROJETOS_ENCONTRADO )
+if "!devMaster!" == "ESTRELAR" ( set "atalhoModo=ON_VIEW" & set "projects=#WebSocket_server# #URA_Reversa_serverJsf# #WebScraper_serverC6# #WebScraper_serverC6_New2#" & goto PROJETOS_ENCONTRADO )
+if "!devMaster!" == "ESTRELAR_MARCOS" ( set "atalhoModo=ON_HIDE" & set "projects=#WebSocket_server# " & goto PROJETOS_ENCONTRADO )
+if "!devMaster!" == "ESTRELAR_THAYNA" ( set "atalhoModo=ON_HIDE" & set "projects=#WebSocket_server# " & goto PROJETOS_ENCONTRADO )
 !3_BACKGROUND! /NOCONSOLE "cmd.exe /c !fileMsg! "[!local!\!arquivo!]\\nNENHUM PROJETO PARA ESSE PC!"" & exit
 :PROJETOS_ENCONTRADO
 

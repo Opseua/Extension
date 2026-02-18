@@ -28,7 +28,7 @@ async function clientInputChrome(inf = {}) {
 
         // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        let urlTarget = gO.inf.WebScraper_Chrome_Extension.url; lead = lead.trim(); let campos = lead.split('\t'), administrador = campos[0], cnpj = campos[1], email = campos[2], telefone = campos[3];
+        let urlTarget = gO.inf.WebScraper_Extension.url; lead = lead.trim(); let campos = lead.split('\t'), administrador = campos[0], cnpj = campos[1], email = campos[2], telefone = campos[3];
         let razaoSocial = campos[4], nomes = administrador.split(' '), primeiroNome = nomes[0], sobrenome = nomes.length > 1 ? administrador.substring(administrador.indexOf(' ') + 1) : '';
         let params, elements = [], res, pageValue, txt, inputRes = '', leadPrimeiroNome = primeiroNome.trim(), leadSobrenome = sobrenome.trim();
         let leadEmail = email.trim(), leadRazaoSocial = razaoSocial.trim(), leadTelefone = (`${telefone.startsWith(`55`) ? '' : '55'}${telefone}`).trim(), leadCnpj = cnpj.trim(); async function getBody() {

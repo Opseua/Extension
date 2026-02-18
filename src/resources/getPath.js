@@ -77,7 +77,7 @@ async function getPath(inf = {}) {
         let devMasterDevSlaveDevChildren = `${gW.devMaster}-${gW.devSlave}-${devChildren}`; gW['devChildren'] = devChildren;
         gW['devGet'] = [`${gW.hostPortWeb}/?roo=${devMasterDevSlaveDevChildren}`, `${gW.hostPortLoc}/?roo=${devMasterDevSlaveDevChildren}`,];
     } else {
-        let fPW = `${letter}:/ARQUIVOS`; globalThis['fileProjetos'] = `${fPW}/PROJETOS`; globalThis['fileChrome_Extension'] = `${fPW}/PROJETOS/Chrome_Extension`; globalThis['fileWindows'] = `${fPW}/WINDOWS`;
+        let fPW = `${letter}:/ARQUIVOS`; globalThis['fileProjetos'] = `${fPW}/PROJETOS`; globalThis['fileExtension'] = `${fPW}/PROJETOS/Extension`; globalThis['fileWindows'] = `${fPW}/WINDOWS`;
         gW['conf'] = res.conf; gW['root'] = res.root; gW['functions'] = res.functions; gW['project'] = res.project; gW['file'] = res.file; gW['line'] = res.line;
     }
 

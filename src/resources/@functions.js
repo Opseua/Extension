@@ -24,7 +24,10 @@
 // Math.trunc(4.9); /*    */  Math.ceil(4.9);  /* */ Math.floor(4.9); /* */ Math.round(4.9);
 
 /* QUALQUER → BASE64 | BASE64 → UTF8 */ // let qualquerParaBase64 = Buffer.from('CASAMENTO').toString('base64'); console.log(`qualquerParaBase64 ${qualquerParaBase64}`) // npm prune (REMOVER BIBLIOTECAS DESNCESSÁRIAS)
-// let base64ParaUtf8 = Buffer.from(qualquerParaBase64, 'base64').toString('utf8'); console.log(`base64ParaUtf8 ${base64ParaUtf8}`); cd /d D:\ARQUIVOS\PROJETOS\Sniffer_Python
+// let base64ParaUtf8 = Buffer.from(qualquerParaBase64, 'base64').toString('utf8'); console.log(`base64ParaUtf8 ${base64ParaUtf8}`); cd /d D:\ARQUIVOS\PROJETOS\Sniffer
+
+// let table = { 'cols': ['COL_A', 'COL_B', 'COL_C',], 'lins': [['A1', 'B1', 'C1',], ['A2', 'B2', 'C2',], ['A3', 'B3', 'C3',],], };
+// table = table.lins.map(l => Object.fromEntries(table.cols.map((c, i) => [c, l[i],]))); console.table(table);
 
 // let table = { 'cols': ['COL_A', 'COL_B', 'COL_C',], 'lins': [['A1', 'B1', 'C1',], ['A2', 'B2', 'C2',], ['A3', 'B3', 'C3',],], };
 // table = table.lins.map(l => Object.fromEntries(table.cols.map((c, i) => [c, l[i],]))); console.table(table);
@@ -108,7 +111,7 @@ function startupTime(b, c) { let a = c - b, s = Math.trunc(a / 1000), m = a % 10
 // {IMPORT FUNÇÕES} → DINAMICAMENTE QUANDO NECESSÁRIO | FUNÇÃO GENÉRICA (QUANDO O ENGINE ESTIVER ERRADO) * ENCAMINHAR PARA DEVICE
 let qtd0 = 0; async function importFun(infOk = {}) {
     let { engOk, path, inf, project, } = infOk; qtd0++; let name = path.match(/([^\\/]+)(?=\.[^\\.]+$)/)[0]; if (qtd0 > 50) { console.log(`IMPORT FUN: ERRO | EM LOOP!!! '${path}'`); codeStop(); }
-    if (engOk) { await import((eng ? `${gW.root}://${gW.functions}` : `file://${fileProjetos}/${project === 'NAO_DEFINIDO' ? 'Chrome_Extension' : project}`) + `/${path.replace('./', '')}`); return globalThis[name](inf); }
+    if (engOk) { await import((eng ? `${gW.root}://${gW.functions}` : `file://${fileProjetos}/${project === 'NAO_DEFINIDO' ? 'Extension' : project}`) + `/${path.replace('./', '')}`); return globalThis[name](inf); }
     else { let retDevAndFun = await devFun({ 'e': import.meta.url, 'enc': true, 'data': { name, 'par': inf, }, }); return retDevAndFun; }
 }
 
@@ -128,8 +131,8 @@ let qtd1 = 0; async function importLibs(...args) {
 
 // SUBSTITUIR VARIÁVEIS
 function replaceVars(inf = {}) {
-    let { content = '', } = inf; let a = letter, b = fileProjetos, c = fileChrome_Extension, d = fileWindows;
-    return content.replace(/[!%](letter|letra)[!%]/g, a).replace(/[!%](fileProjetos)[!%]/g, b).replace(/[!%](fileChrome_Extension)[!%]/g, c).replace(/[!%](fileWindows)[!%]/g, d);
+    let { content = '', } = inf; let a = letter, b = fileProjetos, c = fileExtension, d = fileWindows;
+    return content.replace(/[!%](letter|letra)[!%]/g, a).replace(/[!%](fileProjetos)[!%]/g, b).replace(/[!%](fileExtension)[!%]/g, c).replace(/[!%](fileWindows)[!%]/g, d);
 }
 
 // PEGAR PARTE DE TEXTO DE STRING
@@ -158,7 +161,7 @@ globalThis['gO'] = { 'inf': {}, }; Object.assign(globalThis, {
     /* ## FUNÇÕES */         clearConsole, getTypeof, codeStop, rateLimiter, randomNumber, randomId, awaitTimeout, startupTime, importFun, importLibs, replaceVars, stringGet, fDirname, fJoin, paramsObj,
 });
 
-// ********************** OBRIGATÓRIO FICAR APOS O EXPORT GLOBAL (não subir!!!) NÃO USAR !!! | NÃO COMENTAR! NECESSÁRIO QUANDO NÃO FOR 'Chrome_Extension'
+// ********************** OBRIGATÓRIO FICAR APOS O EXPORT GLOBAL (não subir!!!) NÃO USAR !!! | NÃO COMENTAR! NECESSÁRIO QUANDO NÃO FOR 'Extension'
 function all1() { } globalThis['all1'] = all1; if (!globalThis.all2 && engType < 3) { await import('./@export.js'); }
 // *****************************************************************************************
 

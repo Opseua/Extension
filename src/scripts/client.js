@@ -2,7 +2,7 @@ let e = currentFile(new Error()), ee = e; let wsServers = { 'rooms': {}, }, reco
 async function client(inf = {}) {
     let ret = { 'ret': false, }; e = inf.e || e;
     try {
-        /* IMPORTAR BIBLIOTECA [CHROME/NODE] */ if (libs['ws']) { libs['ws'] = { 'WebSocket': 1, 'pro': 'WebSocket', }; libs = await importLibs(libs, 'client'); }
+        /* IMPORTAR BIBLIOTECA [CHROME/NODE] */ if (libs['ws']) { libs['ws'] = { 'WebSocket': 1, 'pro': 'Connection', }; libs = await importLibs(libs, 'client'); }
 
         // ### CONEXÃO
         function connect(inf = {}) {
@@ -51,7 +51,7 @@ async function client(inf = {}) {
         let servers = [gW.devGet[0], gW.devGet[1],]; if ((`${gW.devGet[0]}`).includes('ESTRELAR') || (`${gW.devGet[0]}`).includes('OPSEUA')) {
             servers.push(`${gW.serverWebEstrelar}:${gW.devGet[0].split(':')[1]}`);
         } for (let [index, value,] of servers.entries()) {
-            if (!value.includes('127.0.0.1') && (gW.project === 'Sniffer_Python' || (!value.includes('USUARIO_0') && value.includes('USUARIO_')))) {
+            if (!value.includes('127.0.0.1') && (gW.project === 'Sniffer' || (!value.includes('USUARIO_0') && value.includes('USUARIO_')))) {
                 // NÃO CONECTAR AO WEBSOCKET
             } else { connect({ 'hostRoom': value, }); listenerMonitorar(value, async (nomeList, param1) => { runLis({ nomeList, param1, }); }); }
         }

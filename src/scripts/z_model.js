@@ -6,7 +6,7 @@ let e = currentFile(new Error()), ee = e; let libs = { 'net': {}, };
 async function model(inf = {}) {
     let ret = { 'ret': false, }, nameFun = `MODEL`; e = inf.e || e;
     try {
-        /* IMPORTAR BIBLIOTECA [NODE] */  if (libs['net']) { libs['net']['net'] = 1; libs = await importLibs(libs, 'serverRun [Sniffer_Python]'); }
+        /* IMPORTAR BIBLIOTECA [NODE] */  if (libs['net']) { libs['net']['net'] = 1; libs = await importLibs(libs, 'serverRun [Sniffer]'); }
 
         let { text = 'aaa', folder = 'bbb', } = inf;
 

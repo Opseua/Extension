@@ -185,7 +185,7 @@ async function chat(args) {
 }
 
 // --- EXEMPLO DE USO ---
-let retChat; let guide = await readFile(`D:/ARQUIVOS/PROJETOS/Sniffer_Python/logs/Plataformas/z_OUTROS/TryRating/BroadMatchRatings/z_AI.txt`, 'utf8');
+let retChat; let guide = await readFile(`D:/ARQUIVOS/PROJETOS/Sniffer/logs/Plataformas/z_OUTROS/TryRating/BroadMatchRatings/z_AI.txt`, 'utf8');
 let instrucao = `Preciso da sua ajuda para completar um tipo de tarefa especifica, as instruções são essas. Para facilitar o entendimento da resposta seja o mais direto possível, quero respostas curtas e diretas, no máximo 10 palavras, não quero explicação do que você entendeu. Seja bem direto!\n\n --- \n\n${guide}`;
 retChat = await chat({
     'chatIdA': 'chat_1771363175565',

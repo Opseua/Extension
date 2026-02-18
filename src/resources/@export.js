@@ -57,7 +57,6 @@ await import('./dateHour.js'); await import('./regex.js'); await import('./chrom
 
 // → SCRIPTS
 await import('../scripts/elementAction.js'); // → 'Chrome_Extension' / 'WebScraper'
-// await import('../scripts/extractContentPageForAi.js'); // → 'Chrome_Extension'
 //  **************
 
 

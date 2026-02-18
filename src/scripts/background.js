@@ -22,9 +22,9 @@ async function backgroundRun() {
 
     // #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
 
-    gO.inf['WebScraper_Chrome_Extension'] = { 'url': '*c6bank.my.site.com*', }; globalThis.indicationCheck = async (inf = {}) => {
+    gO.inf['WebScraper_Extension'] = { 'url': '*c6bank.my.site.com*', }; globalThis.indicationCheck = async (inf = {}) => {
         let { duration = 6, origin = '', } = inf; let add = [{ 'active': true, }, { 'focused': true, }, { 'state': 'maximized', },], fF = { 'firstFind': true, }, flt = { 'pinned': true, 'index': 0, 'incognito': false, };
-        let iTA, rTA, atn = [{ 'sharedMedia': true, },], tA = { 'url': gO.inf.WebScraper_Chrome_Extension.url, }, fltOk = { ...flt, }; delete fltOk['incognito']; let tAFlt = { ...tA, ...flt, };
+        let iTA, rTA, atn = [{ 'sharedMedia': true, },], tA = { 'url': gO.inf.WebScraper_Extension.url, }, fltOk = { ...flt, }; delete fltOk['incognito']; let tAFlt = { ...tA, ...flt, };
         let xNot = { 'title': `INDICAÇÃO AUTOMÁTICA`, duration, 'icon': `iconRed`, 'ntfy': false, }; if (isModeIncognito) { notification({ 'text': `Não use no modo anônimo!`, ...xNot, }); return false; }
 
         // CHECAR SE A ABA EXISTE E ESTÁ FIXADA NO INDEX 0
